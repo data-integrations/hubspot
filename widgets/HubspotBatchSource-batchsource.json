@@ -1,0 +1,129 @@
+{
+  "metadata": {
+    "spec-version": "1.5"
+  },
+  "configuration-groups": [
+    {
+      "label": "Basic",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "App ID",
+          "name": "appId"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "API Key",
+          "name": "apiKey"
+        },
+        {
+          "name": "objectType",
+          "label": "Objects",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "Analytics",
+            "values": [
+              "Contact Lists",
+              "Contacts",
+              "Email Events",
+              "Email Subscription",
+              "Recent Campaigns",
+              "Analytics",
+              "Companies",
+              "Deals",
+              "Deal Pipelines",
+              "Marketing Email",
+              "Products",
+              "Tickets"
+            ]
+          }
+        },
+        {
+          "widget-type": "number",
+          "label": "Number of API calls per day",
+          "name": "callsPerDay",
+          "widget-attributes": {
+            "default": "10000",
+            "min": "1",
+            "max": "2147483647"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Analytics",
+      "properties": [
+        {
+          "name": "timePeriod",
+          "label": "Time Period",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "total",
+            "values": [
+              "total",
+              "daily",
+              "weekly",
+              "monthly",
+              "summarize/daily",
+              "summarize/weekly",
+              "summarize/monthly"
+            ]
+          }
+        },
+        {
+          "name": "reportType",
+          "label": "Report Type",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "totals",
+            "values": [
+              "landing-pages",
+              "standard-pages",
+              "blog-posts",
+              "listing-pages",
+              "knowledge-articles",
+              "totals",
+              "sessions",
+              "sources",
+              "geolocation",
+              "utm-campaigns",
+              "utm-contents",
+              "utm-mediums",
+              "utm-sources",
+              "utm-terms",
+              "event-completions",
+              "forms",
+              "pages",
+              "social-assists"
+            ]
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Start Date",
+          "name": "startDate"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "End Date",
+          "name": "endDate"
+        },
+        {
+          "name": "filters",
+          "label": "Filters",
+          "widget-type": "dsv",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "widget-type": "non-editable-schema-editor",
+      "schema": {
+      }
+    }
+  ]
+}
