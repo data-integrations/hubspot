@@ -1,0 +1,12 @@
+{
+  "objects": [
+    {
+      "testobj": 2
+    },
+    {
+      "testobj": 3
+    }
+  ],
+  "hasMore": false,
+  "offset": 2
+}

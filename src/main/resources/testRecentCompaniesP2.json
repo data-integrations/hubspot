@@ -1,0 +1,9 @@
+{
+  "results": [
+    { "testobj" : 2 },
+    { "testobj" : 3 }
+  ],
+  "offset": 2,
+  "hasMore": false,
+  "total":4
+}
