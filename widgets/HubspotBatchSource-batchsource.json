@@ -7,12 +7,7 @@
       "label": "Basic",
       "properties": [
         {
-          "widget-type": "textbox",
-          "label": "App ID",
-          "name": "appId"
-        },
-        {
-          "widget-type": "textbox",
+          "widget-type": "securekey-text",
           "label": "API Key",
           "name": "apiKey"
         },
@@ -36,16 +31,6 @@
               "Products",
               "Tickets"
             ]
-          }
-        },
-        {
-          "widget-type": "number",
-          "label": "Number of API calls per day",
-          "name": "callsPerDay",
-          "widget-attributes": {
-            "default": "10000",
-            "min": "1",
-            "max": "2147483647"
           }
         }
       ]
@@ -101,12 +86,18 @@
         {
           "widget-type": "textbox",
           "label": "Start Date",
-          "name": "startDate"
+          "name": "startDate",
+          "widget-attributes" : {
+            "placeholder": "YYYYMMDD format."
+          }
         },
         {
           "widget-type": "textbox",
           "label": "End Date",
-          "name": "endDate"
+          "name": "endDate",
+          "widget-attributes" : {
+            "placeholder": "YYYYMMDD format."
+          }
         },
         {
           "name": "filters",

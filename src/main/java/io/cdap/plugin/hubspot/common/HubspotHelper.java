@@ -20,7 +20,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.cdap.cdap.api.data.format.StructuredRecord;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,7 +27,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -36,11 +34,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Helper class to incorporate Hubspot api interaction
  */
 public class HubspotHelper {
+
+  private static final int MAX_TRIES = 3;
+
+  /**
+   * Number of objects in one page to pull
+   */
+  public static final String PAGE_SIZE = "100";
 
   public HubspotPage getHupspotPage(BaseHubspotConfig baseHubspotConfig, String offset) throws IOException {
     HttpGet request = getRequest(baseHubspotConfig, offset);
@@ -57,23 +63,18 @@ public class HubspotHelper {
 
   private CloseableHttpResponse downloadPage(BaseHubspotConfig baseHubspotConfig, HttpGet request) throws IOException {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-    ArrayList<Header> clientHeaders = new ArrayList<>();
-    String accessToken = baseHubspotConfig.apiKey;
-    clientHeaders.add(new BasicHeader("Authorization", "Bearer " + accessToken));
-    httpClientBuilder.setDefaultHeaders(clientHeaders);
     CloseableHttpClient client = httpClientBuilder.build();
 
-    int maxTries = 3;
     int count = 0;
     while (true) {
       CloseableHttpResponse response = client.execute(request);
       StatusLine statusLine = response.getStatusLine();
-      if (statusLine.getStatusCode() != 200) {
+      if (statusLine.getStatusCode() >= 300) {
         if (500 > statusLine.getStatusCode() &&
           statusLine.getStatusCode() >= 400) {
           throw new IOException(statusLine.getReasonPhrase());
         }
-        if (++count == maxTries) {
+        if (++count == MAX_TRIES) {
           throw new IOException(statusLine.getReasonPhrase());
         }
       }
@@ -85,6 +86,9 @@ public class HubspotHelper {
     URI uri = null;
     try {
       URIBuilder b = new URIBuilder(getEndpoint(baseHubspotConfig));
+      if (baseHubspotConfig.apiKey != null) {
+        b.addParameter("hapikey", baseHubspotConfig.apiKey);
+      }
       if (baseHubspotConfig.startDate != null) {
         b.addParameter("start", baseHubspotConfig.startDate);
       }
@@ -95,45 +99,67 @@ public class HubspotHelper {
         b.addParameter("f", filter);
       }
       if (getLimitPropertyName(baseHubspotConfig) != null) {
-        b.addParameter(getLimitPropertyName(baseHubspotConfig), "100");
+        b.addParameter(getLimitPropertyName(baseHubspotConfig), PAGE_SIZE);
       }
       if (offset != null && getOffsetPropertyName(baseHubspotConfig) != null) {
         b.addParameter(getOffsetPropertyName(baseHubspotConfig), offset);
       }
       uri = b.build();
     } catch (URISyntaxException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("Can't build valid uri", e);
     }
     return new HttpGet(uri);
   }
 
-  private HubspotPage parseJson(BaseHubspotConfig baseHubspotConfig, String json) {
+  private HubspotPage parseJson(BaseHubspotConfig baseHubspotConfig, String json) throws IOException {
     JsonElement root = new JsonParser().parse(json);
     JsonObject jsonObject = root.getAsJsonObject();
     List<JsonElement> hubspotObjects = new ArrayList<>();
     if (getObjectApiName(baseHubspotConfig) != null) {
-      JsonArray jsonObjects = jsonObject.get(getObjectApiName(baseHubspotConfig)).getAsJsonArray();
-      for (JsonElement jsonElement : jsonObjects) {
-        hubspotObjects.add(jsonElement);
+      JsonElement jsonObjects = jsonObject.get(getObjectApiName(baseHubspotConfig));
+      if (jsonObjects != null && jsonObjects.isJsonArray()) {
+        JsonArray jsonObjectsArray = jsonObjects.getAsJsonArray();
+        for (JsonElement jsonElement : jsonObjectsArray) {
+          hubspotObjects.add(jsonElement);
+        }
+      } else {
+        throw new IOException(
+          String.format("Not expected JSON response format, '%s' element not found or wrong type",
+                        getObjectApiName(baseHubspotConfig)));
       }
     } else {
       hubspotObjects.add(root);
     }
     Boolean hasNext = null;
     if (getMoreApiName(baseHubspotConfig) != null) {
-      hasNext = jsonObject.get(getMoreApiName(baseHubspotConfig)).getAsBoolean();
+      JsonElement hasNextElement = jsonObject.get(getMoreApiName(baseHubspotConfig));
+      if (hasNextElement != null) {
+          hasNext = hasNextElement.getAsBoolean();
+      } else {
+        throw new IOException(
+          String.format("Not expected JSON response format, '%s' element not found or wrong type",
+                        getMoreApiName(baseHubspotConfig)));
+      }
     }
     String offset = null;
     if (getOffsetApiName(baseHubspotConfig) != null) {
-      offset = jsonObject.get(getOffsetApiName(baseHubspotConfig)).getAsString();
-      if (hasNext == null) {
-        hasNext = !offset.equals("0");
+      JsonElement offsetElement = jsonObject.get(getOffsetApiName(baseHubspotConfig));
+      if (offsetElement != null) {
+        offset = offsetElement.getAsString();
+        JsonElement totalElement = jsonObject.get("total");
+        if (hasNext == null && totalElement != null) {
+          hasNext = !offset.equals(totalElement.getAsString());
+        }
+      } else {
+        throw new IOException(
+          String.format("Not expected JSON response format, '%s' element not found or wrong type",
+                        getOffsetApiName(baseHubspotConfig)));
       }
     }
-
     return new HubspotPage(hubspotObjects, baseHubspotConfig, offset, hasNext);
   }
 
+  @Nullable
   private String getLimitPropertyName(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -155,6 +181,7 @@ public class HubspotHelper {
     }
   }
 
+  @Nullable
   private String getOffsetPropertyName(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -176,6 +203,7 @@ public class HubspotHelper {
     }
   }
 
+  @Nullable
   private String getOffsetApiName(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -188,7 +216,10 @@ public class HubspotHelper {
       case PRODUCTS :
       case TICKETS :
       case ANALYTICS :
-        return "offset";
+        if (baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
+          return "offset";
+        }
+        return null;
       case CONTACTS :
         return "vid-offset";
       case DEAL_PIPELINES :
@@ -197,6 +228,7 @@ public class HubspotHelper {
     }
   }
 
+  @Nullable
   private String getMoreApiName(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -218,6 +250,7 @@ public class HubspotHelper {
     }
   }
 
+  @Nullable
   private String getObjectApiName(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -240,12 +273,16 @@ public class HubspotHelper {
       case TICKETS :
         return "objects";
       case ANALYTICS :
-        return "breakdowns";
+        if (baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
+          return "breakdowns";
+        }
+        return null;
       default :
         return null;
     }
   }
 
+  @Nullable
   public String getEndpoint(BaseHubspotConfig baseHubspotConfig) {
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
@@ -272,8 +309,8 @@ public class HubspotHelper {
         return "https://api.hubapi.com/crm-objects/v1/objects/tickets/paged";
       case ANALYTICS :
         return String.format("https://api.hubapi.com/analytics/v2/reports/%s/%s",
-                             baseHubspotConfig.getReportType().toString(),
-                             baseHubspotConfig.getTimePeriod().toString());
+                             baseHubspotConfig.getReportType().getStringValue(),
+                             baseHubspotConfig.getTimePeriod().getStringValue());
       default :
         return null;
     }

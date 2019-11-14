@@ -38,5 +38,4 @@ public class HubspotInputFormat extends InputFormat {
   public RecordReader createRecordReader(InputSplit inputSplit, TaskAttemptContext taskAttemptContext) {
     return new HubspotRecordReader();
   }
-
 }

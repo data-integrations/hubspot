@@ -37,11 +37,11 @@ import org.apache.hadoop.io.NullWritable;
 import java.util.stream.Collectors;
 
 /**
- * Plugin read Hubspot objects in batch
+ * Plugin reads Hubspot objects in batch
  */
 @Plugin(type = BatchSource.PLUGIN_TYPE)
 @Name(HubspotBatchSource.NAME)
-@Description("Plugin read Hubspot objects in batch")
+@Description("Plugin reads Hubspot objects in batch")
 public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, StructuredRecord> {
 
   private final BaseHubspotConfig config;
@@ -54,7 +54,6 @@ public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, S
 
   @Override
   public void configurePipeline(PipelineConfigurer pipelineConfigurer) {
-    IdUtils.validateId(config.referenceName);
     validateConfiguration(pipelineConfigurer.getStageConfigurer().getFailureCollector());
     pipelineConfigurer.getStageConfigurer().setOutputSchema(config.getSchema());
   }
@@ -76,6 +75,7 @@ public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, S
   }
 
   private void validateConfiguration(FailureCollector failureCollector) {
+    IdUtils.validateReferenceName(config.referenceName, failureCollector);
     config.validate(failureCollector);
     failureCollector.getOrThrowException();
   }

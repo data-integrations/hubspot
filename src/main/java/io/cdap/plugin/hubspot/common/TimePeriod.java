@@ -54,4 +54,8 @@ public enum TimePeriod {
       .findFirst()
       .orElseThrow(() -> new IllegalArgumentException(String.format("'%s' is invalid ObjectType.", value)));
   }
+
+  public String getStringValue() {
+    return stringValue;
+  }
 }

@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * Representing page in Hubspot API
@@ -33,7 +34,7 @@ public class HubspotPage {
 
   public HubspotPage(List<JsonElement> hubspotObjects,
                      BaseHubspotConfig hubspotConfig,
-                     String offset, boolean hasNext) {
+                     String offset, Boolean hasNext) {
     this.hubspotObjects = hubspotObjects;
     this.hubspotConfig = hubspotConfig;
     this.offset = offset;
@@ -44,11 +45,10 @@ public class HubspotPage {
     return hubspotObjects.iterator();
   }
 
+  @Nullable
   public HubspotPage nextPage() throws IOException {
-    if (hasNext) {
-      return new HubspotHelper().getHupspotPage(hubspotConfig, offset);
-    } else {
-      return null;
-    }
+    return (hasNext != null && hasNext)
+      ? new HubspotHelper().getHupspotPage(hubspotConfig, offset)
+      : null;
   }
 }
