@@ -34,7 +34,7 @@ public class ConfigValidator {
     try {
       TimePeriod period = baseHubspotConfig.getTimePeriod();
       if (!baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_TYPE) &&
-        baseHubspotConfig.getReportType().equals(ReportType.TOTALS)) {
+        baseHubspotConfig.getReportEndpoint().equals(ReportEndpoint.TOTALS)) {
         switch (period) {
           case MONTHLY:
           case WEEKLY:
@@ -91,7 +91,44 @@ public class ConfigValidator {
       return;
     }
     try {
-      baseHubspotConfig.getReportType();
+      switch (baseHubspotConfig.getReportType()) {
+        case REPORT_CATEGORY:
+          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_CATEGORY)) {
+            return;
+          }
+          try {
+            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportCategory);
+          } catch (IllegalArgumentException e) {
+            failureCollector.addFailure(String.format("Report Category '%s' is not valid.",
+                                                      baseHubspotConfig.reportCategory),
+                                        null).withConfigProperty(BaseHubspotConfig.REPORT_CATEGORY);
+          }
+          break;
+        case REPORT_OBJECT:
+          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_OBJECT)) {
+            return;
+          }
+          try {
+            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportObject);
+          } catch (IllegalArgumentException e) {
+            failureCollector.addFailure(String.format("Report Object '%s' is not valid.",
+                                                      baseHubspotConfig.reportObject),
+                                        null).withConfigProperty(BaseHubspotConfig.REPORT_OBJECT);
+          }
+          break;
+        case REPORT_CONTENT:
+          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_CONTENT)) {
+            return;
+          }
+          try {
+            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportContent);
+          } catch (IllegalArgumentException e) {
+            failureCollector.addFailure(String.format("Report Content '%s' is not valid.",
+                                                      baseHubspotConfig.reportContent),
+                                        null).withConfigProperty(BaseHubspotConfig.REPORT_CONTENT);
+          }
+          break;
+      }
     } catch (IllegalArgumentException e) {
       failureCollector.addFailure(String.format("Report Type '%s' is not valid.", baseHubspotConfig.reportType),
                                   null).withConfigProperty(BaseHubspotConfig.REPORT_TYPE);

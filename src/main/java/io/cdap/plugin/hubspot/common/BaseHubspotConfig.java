@@ -38,6 +38,9 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   public static final String OBJECT_TYPE = "objectType";
   public static final String TIME_PERIOD = "timePeriod";
   public static final String REPORT_TYPE = "reportType";
+  public static final String REPORT_CONTENT = "reportContent";
+  public static final String REPORT_CATEGORY = "reportCategory";
+  public static final String REPORT_OBJECT = "reportObject";
   public static final String START_DATE = "startDate";
   public static final String END_DATE = "endDate";
   public static final String FILTERS = "filters";
@@ -62,6 +65,21 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   @Macro
   @Nullable
   public String reportType;
+  @Name(REPORT_CONTENT)
+  @Description("Analytics report type of content that you want to get data for.")
+  @Macro
+  @Nullable
+  public String reportContent;
+  @Name(REPORT_CATEGORY)
+  @Description("Analytics report category used to break down the analytics data.")
+  @Macro
+  @Nullable
+  public String reportCategory;
+  @Name(REPORT_OBJECT)
+  @Description("Analytics  report type of object that you want the analytics data for.")
+  @Macro
+  @Nullable
+  public String reportObject;
   @Name(TIME_PERIOD)
   @Description("Time period used to group the data.")
   @Macro
@@ -100,6 +118,25 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
 
   public ObjectType getObjectType() {
     return ObjectType.fromString(objectType);
+  }
+
+  @Nullable
+  public ReportEndpoint getReportEndpoint() {
+    switch (getReportType()) {
+      case REPORT_CATEGORY:
+        return getReportEndpoint(reportCategory);
+      case REPORT_OBJECT:
+        return getReportEndpoint(reportObject);
+      case REPORT_CONTENT:
+        return getReportEndpoint(reportContent);
+      default:
+        throw new IllegalArgumentException(String.format("'%s' is invalid ObjectType.", reportType));
+    }
+  }
+
+  @Nullable
+  public ReportEndpoint getReportEndpoint(String reportCategory) {
+    return ReportEndpoint.fromString(reportCategory);
   }
 
   @Nullable

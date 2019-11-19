@@ -43,7 +43,6 @@
           "label": "Time Period",
           "widget-type": "select",
           "widget-attributes": {
-            "default": "total",
             "values": [
               "total",
               "daily",
@@ -60,13 +59,35 @@
           "label": "Report Type",
           "widget-type": "select",
           "widget-attributes": {
-            "default": "totals",
+            "default": "Category",
+            "values": [
+              "Content",
+              "Category",
+              "Object"
+            ]
+          }
+        },
+        {
+          "name": "reportContent",
+          "label": "Report Content",
+          "widget-type": "select",
+          "widget-attributes": {
             "values": [
               "landing-pages",
               "standard-pages",
               "blog-posts",
               "listing-pages",
-              "knowledge-articles",
+              "knowledge-articles"
+            ]
+          }
+        },
+        {
+          "name": "reportCategory",
+          "label": "Report Category",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "totals",
+            "values": [
               "totals",
               "sessions",
               "sources",
@@ -75,7 +96,16 @@
               "utm-contents",
               "utm-mediums",
               "utm-sources",
-              "utm-terms",
+              "utm-terms"
+            ]
+          }
+        },
+        {
+          "name": "reportObject",
+          "label": "Report Object",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
               "event-completions",
               "forms",
               "pages",
@@ -115,6 +145,72 @@
       "widget-type": "non-editable-schema-editor",
       "schema": {
       }
+    }
+  ],
+  "filters": [
+    {
+      "name": "Select Analytics properties",
+      "condition": {
+        "expression": "objectType == 'Analytics'"
+      },
+      "show": [
+        {
+          "name": "timePeriod",
+          "type": "property"
+        },
+        {
+          "name": "reportType",
+          "type": "property"
+        },
+        {
+          "name": "startDate",
+          "type": "property"
+        },
+        {
+          "name": "endDate",
+          "type": "property"
+        },
+        {
+          "name": "filters",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Content",
+      "condition": {
+        "expression": "reportType == 'Content'"
+      },
+      "show": [
+        {
+          "name": "reportContent",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Category",
+      "condition": {
+        "expression": "reportType == 'Category'"
+      },
+      "show": [
+        {
+          "name": "reportCategory",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Object",
+      "condition": {
+        "expression": "reportType == 'Object'"
+      },
+      "show": [
+        {
+          "name": "reportObject",
+          "type": "property"
+        }
+      ]
     }
   ]
 }

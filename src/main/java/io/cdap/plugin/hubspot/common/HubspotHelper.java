@@ -309,7 +309,7 @@ public class HubspotHelper {
         return "https://api.hubapi.com/crm-objects/v1/objects/tickets/paged";
       case ANALYTICS :
         return String.format("https://api.hubapi.com/analytics/v2/reports/%s/%s",
-                             baseHubspotConfig.getReportType().getStringValue(),
+                             baseHubspotConfig.getReportEndpoint().getStringValue(),
                              baseHubspotConfig.getTimePeriod().getStringValue());
       default :
         return null;
