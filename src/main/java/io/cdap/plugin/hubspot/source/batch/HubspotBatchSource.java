@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.cdap.plugin.hubspot.batch.source;
+package io.cdap.plugin.hubspot.source.batch;
 
 import com.google.gson.JsonElement;
 import io.cdap.cdap.api.annotation.Description;
@@ -46,7 +46,7 @@ public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, S
 
   private final BaseHubspotConfig config;
 
-  public static final String NAME = "HubspotBatchSource";
+  public static final String NAME = "Hubspot";
 
   public HubspotBatchSource(BaseHubspotConfig config) {
     this.config = config;
@@ -71,7 +71,7 @@ public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, S
 
   @Override
   public void transform(KeyValue<NullWritable, JsonElement> input, Emitter<StructuredRecord> emitter) {
-    emitter.emit(HubspotHelper.transform(input.getValue(), config));
+    emitter.emit(HubspotHelper.transform(input.getValue().toString(), config));
   }
 
   private void validateConfiguration(FailureCollector failureCollector) {

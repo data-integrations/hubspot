@@ -47,8 +47,9 @@ public class HubspotHelper {
    * Number of objects in one page to pull
    */
   public static final String PAGE_SIZE = "100";
+  public static final String DEFAULT_API_SERVER_URL = "https://api.hubapi.com";
 
-  public HubspotPage getHupspotPage(BaseHubspotConfig baseHubspotConfig, String offset) throws IOException {
+  public HubspotPage getHubspotPage(BaseHubspotConfig baseHubspotConfig, String offset) throws IOException {
     HttpGet request = getRequest(baseHubspotConfig, offset);
 
     CloseableHttpResponse response = downloadPage(baseHubspotConfig, request);
@@ -148,7 +149,7 @@ public class HubspotHelper {
         offset = offsetElement.getAsString();
         JsonElement totalElement = jsonObject.get("total");
         if (hasNext == null && totalElement != null) {
-          hasNext = !offset.equals(totalElement.getAsString());
+          hasNext = !offset.equals(totalElement.getAsString()) && !offset.equals("0");
         }
       } else {
         throw new IOException(
@@ -193,10 +194,10 @@ public class HubspotHelper {
       case PRODUCTS :
       case TICKETS :
       case ANALYTICS :
+      case EMAIL_SUBSCRIPTION :
         return "offset";
       case CONTACTS :
         return "vidOffset";
-      case EMAIL_SUBSCRIPTION :
       case DEAL_PIPELINES :
       default :
         return null;
@@ -215,8 +216,10 @@ public class HubspotHelper {
       case MARKETING_EMAIL :
       case PRODUCTS :
       case TICKETS :
+        return "offset";
       case ANALYTICS :
-        if (baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
+        if (baseHubspotConfig.getTimePeriod() != null &&
+          baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
           return "offset";
         }
         return null;
@@ -273,7 +276,8 @@ public class HubspotHelper {
       case TICKETS :
         return "objects";
       case ANALYTICS :
-        if (baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
+        if (baseHubspotConfig.getTimePeriod() != null &&
+          baseHubspotConfig.getTimePeriod().equals(TimePeriod.TOTAL)) {
           return "breakdowns";
         }
         return null;
@@ -284,31 +288,36 @@ public class HubspotHelper {
 
   @Nullable
   public String getEndpoint(BaseHubspotConfig baseHubspotConfig) {
+    String apiServerUrl = DEFAULT_API_SERVER_URL;
+    if (baseHubspotConfig.apiServerUrl != null &&
+      !baseHubspotConfig.apiServerUrl.isEmpty()) {
+      apiServerUrl = baseHubspotConfig.apiServerUrl;
+    }
     switch (baseHubspotConfig.getObjectType()) {
       case CONTACT_LISTS :
-        return "https://api.hubapi.com/contacts/v1/lists";
+        return String.format("%s/contacts/v1/lists", apiServerUrl);
       case CONTACTS :
-        return "https://api.hubapi.com/contacts/v1/lists/all/contacts/all";
+        return String.format("%s/contacts/v1/lists/all/contacts/all", apiServerUrl);
       case EMAIL_EVENTS :
-        return "https://api.hubapi.com/email/public/v1/events";
+        return String.format("%s/email/public/v1/events", apiServerUrl);
       case EMAIL_SUBSCRIPTION :
-        return "https://api.hubapi.com/email/public/v1/subscriptions/timeline";
+        return String.format("%s/email/public/v1/subscriptions/timeline", apiServerUrl);
       case RECENT_COMPANIES:
-        return "https://api.hubapi.com/companies/v2/companies/recent/modified";
+        return String.format("%s/companies/v2/companies/recent/modified", apiServerUrl);
       case COMPANIES :
-        return "https://api.hubapi.com/companies/v2/companies/paged";
+        return String.format("%s/companies/v2/companies/paged", apiServerUrl);
       case DEALS :
-        return "https://api.hubapi.com/deals/v1/deal/paged";
+        return String.format("%s/deals/v1/deal/paged", apiServerUrl);
       case DEAL_PIPELINES :
-        return "https://api.hubapi.com/crm-pipelines/v1/pipelines/deals";
+        return String.format("%s/crm-pipelines/v1/pipelines/deals", apiServerUrl);
       case MARKETING_EMAIL :
-        return "https://api.hubapi.com/marketing-emails/v1/emails";
+        return String.format("%s/marketing-emails/v1/emails", apiServerUrl);
       case PRODUCTS :
-        return "https://api.hubapi.com/crm-objects/v1/objects/products/paged";
+        return String.format("%s/crm-objects/v1/objects/products/paged", apiServerUrl);
       case TICKETS :
-        return "https://api.hubapi.com/crm-objects/v1/objects/tickets/paged";
+        return String.format("%s/crm-objects/v1/objects/tickets/paged", apiServerUrl);
       case ANALYTICS :
-        return String.format("https://api.hubapi.com/analytics/v2/reports/%s/%s",
+        return String.format("%s/analytics/v2/reports/%s/%s", apiServerUrl,
                              baseHubspotConfig.getReportEndpoint().getStringValue(),
                              baseHubspotConfig.getTimePeriod().getStringValue());
       default :
@@ -316,10 +325,10 @@ public class HubspotHelper {
     }
   }
 
-  public static StructuredRecord transform(JsonElement value, BaseHubspotConfig config) {
+  public static StructuredRecord transform(String value, BaseHubspotConfig config) {
     StructuredRecord.Builder builder = StructuredRecord.builder(config.getSchema());
     builder.set("objectType", config.objectType);
-    builder.set("object", value.toString());
+    builder.set("object", value);
     return builder.build();
   }
 }

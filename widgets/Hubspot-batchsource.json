@@ -7,6 +7,15 @@
       "label": "Basic",
       "properties": [
         {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "hidden",
+          "name": "apiServerUrl"
+        },
+        {
           "widget-type": "securekey-text",
           "label": "API Key",
           "name": "apiKey"
@@ -144,6 +153,18 @@
     {
       "widget-type": "non-editable-schema-editor",
       "schema": {
+        "name": "etlSchemaBody",
+        "type": "record",
+        "fields": [
+          {
+            "name": "objectType",
+            "type": "string"
+          },
+          {
+            "name": "object",
+            "type": "string"
+          }
+        ]
       }
     }
   ],

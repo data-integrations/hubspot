@@ -158,7 +158,7 @@ public class ConfigValidator {
       return;
     }
     try {
-      new HubspotHelper().getHupspotPage(baseHubspotConfig, null);
+      new HubspotHelper().getHubspotPage(baseHubspotConfig, null);
     } catch (IOException e) {
       if (e.getMessage().toLowerCase().contains("forbidden")) {
         failureCollector.addFailure("Api endpoint not accessible with provided Api Key.", null)

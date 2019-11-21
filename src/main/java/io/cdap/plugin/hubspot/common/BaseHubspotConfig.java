@@ -44,6 +44,13 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   public static final String START_DATE = "startDate";
   public static final String END_DATE = "endDate";
   public static final String FILTERS = "filters";
+  public static final String API_SERVER_URL = "apiServerUrl";
+
+  @Name(API_SERVER_URL)
+  @Description("Api Server Url. Not visible, by default null, can be redefined")
+  @Macro
+  @Nullable
+  public String apiServerUrl;
 
   @Name(FILTERS)
   @Description("Keyword to filter the analytics report data to include only the specified breakdowns.")
@@ -76,7 +83,7 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   @Nullable
   public String reportCategory;
   @Name(REPORT_OBJECT)
-  @Description("Analytics  report type of object that you want the analytics data for.")
+  @Description("Analytics report type of object that you want the analytics data for.")
   @Macro
   @Nullable
   public String reportObject;
@@ -113,7 +120,7 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
     Set<Schema.Field> schemaFields = new HashSet<>();
     schemaFields.add(Schema.Field.of("objectType", Schema.nullableOf(Schema.of(Schema.Type.STRING))));
     schemaFields.add(Schema.Field.of("object", Schema.nullableOf(Schema.of(Schema.Type.STRING))));
-    return Schema.recordOf("HubspotObject", schemaFields);
+    return Schema.recordOf("etlSchemaBody", schemaFields);
   }
 
   public ObjectType getObjectType() {

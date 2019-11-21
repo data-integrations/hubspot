@@ -13,14 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.cdap.plugin.hubspot.batch.source;
+package io.cdap.plugin.hubspot.source.batch;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import io.cdap.plugin.hubspot.common.BaseHubspotConfig;
-import io.cdap.plugin.hubspot.common.HubspotHelper;
-import io.cdap.plugin.hubspot.common.HubspotPage;
+import io.cdap.plugin.hubspot.common.HubspotPagesIterator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -28,7 +27,6 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * RecordReader implementation, which reads object instances from Hubspot.
@@ -37,34 +35,25 @@ public class HubspotRecordReader extends RecordReader<NullWritable, JsonElement>
 
   protected static final Gson GSON = new GsonBuilder().create();
 
-  private HubspotPage currentPage;
-  private Iterator<JsonElement> currentPageIterator;
   private JsonElement currentObject;
+  private HubspotPagesIterator hubspotPagesIterator;
 
   @Override
   public void initialize(InputSplit inputSplit, TaskAttemptContext taskAttemptContext) throws IOException {
     Configuration conf = taskAttemptContext.getConfiguration();
     String configJson = conf.get(HubspotInputFormatProvider.PROPERTY_CONFIG_JSON);
     BaseHubspotConfig baseHubspotConfig = GSON.fromJson(configJson, BaseHubspotConfig.class);
-    currentPage = new HubspotHelper().getHupspotPage(baseHubspotConfig, null);
-    currentPageIterator = currentPage.getIterator();
+    hubspotPagesIterator = new HubspotPagesIterator(baseHubspotConfig);
   }
 
   @Override
-  public boolean nextKeyValue() throws IOException, InterruptedException {
-    if (!currentPageIterator.hasNext()) {
-      // switch page
-      HubspotPage nextPage = currentPage.nextPage();
-      if (nextPage != null) {
-        currentPage = nextPage;
-        currentPageIterator = currentPage.getIterator();
-        return nextKeyValue();
-      }
+  public boolean nextKeyValue() {
+    if (!hubspotPagesIterator.hasNext()) {
       return false;
-    } else {
-      currentObject = currentPageIterator.next();
-      return true;
     }
+
+    currentObject = hubspotPagesIterator.next();
+    return true;
   }
 
   @Override

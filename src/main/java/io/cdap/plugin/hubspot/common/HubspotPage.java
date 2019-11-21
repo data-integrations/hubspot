@@ -45,10 +45,14 @@ public class HubspotPage {
     return hubspotObjects.iterator();
   }
 
+  public String getOffset() {
+    return offset;
+  }
+
   @Nullable
   public HubspotPage nextPage() throws IOException {
     return (hasNext != null && hasNext)
-      ? new HubspotHelper().getHupspotPage(hubspotConfig, offset)
+      ? new HubspotHelper().getHubspotPage(hubspotConfig, offset)
       : null;
   }
 }

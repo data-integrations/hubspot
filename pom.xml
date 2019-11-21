@@ -24,6 +24,7 @@
   <version>1.0.0-SNAPSHOT</version>
 
   <properties>
+    <awaitility.version>3.1.6</awaitility.version>
     <cdap.version>6.1.0-SNAPSHOT</cdap.version>
     <commons.version>3.9</commons.version>
     <common.codec.version>1.12</common.codec.version>
@@ -31,6 +32,9 @@
     <hadoop.version>2.3.0</hadoop.version>
     <httpcomponents.version>4.5.9</httpcomponents.version>
     <hydrator.version>2.3.0-SNAPSHOT</hydrator.version>
+    <jackson.version>2.9.9</jackson.version>
+    <unxml.version>0.9</unxml.version>
+    <wiremock.version>1.49</wiremock.version>
   </properties>
 
   <dependencies>
@@ -205,6 +209,26 @@
       <artifactId>gson</artifactId>
       <version>${gson.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.11</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nerdforge</groupId>
+      <artifactId>unxml</artifactId>
+      <version>${unxml.version}</version>
+    </dependency>
 
     <!-- tests -->
     <dependency>
@@ -256,6 +280,12 @@
       <groupId>io.cdap.cdap</groupId>
       <artifactId>cdap-spark-core2_2.11</artifactId>
       <version>${cdap.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.tomakehurst</groupId>
+      <artifactId>wiremock</artifactId>
+      <version>${wiremock.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
