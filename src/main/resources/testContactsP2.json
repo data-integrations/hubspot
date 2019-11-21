@@ -1,0 +1,12 @@
+{
+  "contacts": [
+    {
+      "testobj": 2
+    },
+    {
+      "testobj": 3
+    }
+  ],
+  "has-more": false,
+  "vid-offset": 2
+}

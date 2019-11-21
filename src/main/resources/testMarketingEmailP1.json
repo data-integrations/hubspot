@@ -1,0 +1,14 @@
+{
+  "limit": 10,
+  "objects": [
+    {
+      "testobj": 0
+    },
+    {
+      "testobj": 1
+    }
+  ],
+  "offset": 2,
+  "total": 4,
+  "totalCount": 4
+}
