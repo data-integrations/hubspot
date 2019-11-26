@@ -16,6 +16,7 @@
 package io.cdap.plugin.hubspot.common;
 
 import io.cdap.cdap.etl.api.FailureCollector;
+import io.cdap.plugin.hubspot.sink.batch.SinkHubspotConfig;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -206,6 +207,38 @@ public class ConfigValidator {
         startDate.after(endDate)) {
         failureCollector.addFailure("startDate must be earlier than endDate.", "Enter valid date.");
       }
+    }
+  }
+
+  public static void validateSinkObjectType(SinkHubspotConfig sinkHubspotConfig,
+                                            FailureCollector failureCollector) {
+    if (sinkHubspotConfig.containsMacro(SinkHubspotConfig.OBJECT_TYPE)) {
+      return;
+    }
+    try {
+      ObjectType type = sinkHubspotConfig.getObjectType();
+      switch (type) {
+        case CONTACT_LISTS :
+        case CONTACTS :
+        case COMPANIES :
+        case DEALS :
+        case DEAL_PIPELINES :
+        case MARKETING_EMAIL :
+        case PRODUCTS :
+        case TICKETS :
+          return;
+        case ANALYTICS :
+        case EMAIL_EVENTS :
+        case EMAIL_SUBSCRIPTION :
+        case RECENT_COMPANIES:
+        default :
+          failureCollector.addFailure(String.format("Sink for Object Type '%s' is not supported.",
+                                                    sinkHubspotConfig.objectType),
+                                      null).withConfigProperty(SinkHubspotConfig.OBJECT_TYPE);
+      }
+    } catch (IllegalArgumentException e) {
+      failureCollector.addFailure(String.format("Object Type '%s' is not valid.", sinkHubspotConfig.objectType),
+                                  null).withConfigProperty(SinkHubspotConfig.OBJECT_TYPE);
     }
   }
 }
