@@ -28,12 +28,12 @@ import javax.annotation.Nullable;
 public class HubspotPage {
 
   private List<JsonElement> hubspotObjects;
-  private BaseHubspotConfig hubspotConfig;
+  private SourceHubspotConfig hubspotConfig;
   private String offset;
   private Boolean hasNext;
 
   public HubspotPage(List<JsonElement> hubspotObjects,
-                     BaseHubspotConfig hubspotConfig,
+                     SourceHubspotConfig hubspotConfig,
                      String offset, Boolean hasNext) {
     this.hubspotObjects = hubspotObjects;
     this.hubspotConfig = hubspotConfig;

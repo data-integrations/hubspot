@@ -30,8 +30,8 @@ import io.cdap.cdap.etl.api.batch.BatchSource;
 import io.cdap.cdap.etl.api.batch.BatchSourceContext;
 import io.cdap.plugin.common.IdUtils;
 import io.cdap.plugin.common.LineageRecorder;
-import io.cdap.plugin.hubspot.common.BaseHubspotConfig;
 import io.cdap.plugin.hubspot.common.HubspotHelper;
+import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
 import org.apache.hadoop.io.NullWritable;
 
 import java.util.stream.Collectors;
@@ -44,11 +44,11 @@ import java.util.stream.Collectors;
 @Description("Plugin reads Hubspot objects in batch")
 public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, StructuredRecord> {
 
-  private final BaseHubspotConfig config;
+  private final SourceHubspotConfig config;
 
   public static final String NAME = "Hubspot";
 
-  public HubspotBatchSource(BaseHubspotConfig config) {
+  public HubspotBatchSource(SourceHubspotConfig config) {
     this.config = config;
   }
 

@@ -28,7 +28,7 @@ public class HubspotPagesIterator implements Iterator<JsonElement> {
   private HubspotPage currentPage;
   private Iterator<JsonElement> currentPageIterator;
 
-  public HubspotPagesIterator(BaseHubspotConfig config) throws IOException {
+  public HubspotPagesIterator(SourceHubspotConfig config) throws IOException {
     this.currentPage = new HubspotHelper().getHubspotPage(config, null);
     this.currentPageIterator = currentPage.getIterator();
   }

@@ -18,8 +18,8 @@ package io.cdap.plugin.hubspot.source.batch;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import io.cdap.plugin.hubspot.common.BaseHubspotConfig;
 import io.cdap.plugin.hubspot.common.HubspotPagesIterator;
+import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.InputSplit;
@@ -42,8 +42,8 @@ public class HubspotRecordReader extends RecordReader<NullWritable, JsonElement>
   public void initialize(InputSplit inputSplit, TaskAttemptContext taskAttemptContext) throws IOException {
     Configuration conf = taskAttemptContext.getConfiguration();
     String configJson = conf.get(HubspotInputFormatProvider.PROPERTY_CONFIG_JSON);
-    BaseHubspotConfig baseHubspotConfig = GSON.fromJson(configJson, BaseHubspotConfig.class);
-    hubspotPagesIterator = new HubspotPagesIterator(baseHubspotConfig);
+    SourceHubspotConfig sourceHubspotConfig = GSON.fromJson(configJson, SourceHubspotConfig.class);
+    hubspotPagesIterator = new HubspotPagesIterator(sourceHubspotConfig);
   }
 
   @Override

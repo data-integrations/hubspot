@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.cdap.cdap.api.data.batch.InputFormatProvider;
-import io.cdap.plugin.hubspot.common.BaseHubspotConfig;
+import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
 
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public class HubspotInputFormatProvider implements InputFormatProvider {
   private static final Gson gson = new GsonBuilder().create();
   private final Map<String, String> conf;
 
-  HubspotInputFormatProvider(BaseHubspotConfig config) {
+  HubspotInputFormatProvider(SourceHubspotConfig config) {
     this.conf = new ImmutableMap.Builder<String, String>()
       .put(PROPERTY_CONFIG_JSON, gson.toJson(config))
       .build();

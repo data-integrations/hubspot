@@ -27,40 +27,40 @@ import java.util.List;
  * Helper class to incorporate Hubspot Config Validation
  */
 public class ConfigValidator {
-  public static void validateTimePeriod(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.TIME_PERIOD)) {
+  public static void validateTimePeriod(SourceHubspotConfig sourceHubspotConfig, FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.TIME_PERIOD)) {
       return;
     }
     try {
-      TimePeriod period = baseHubspotConfig.getTimePeriod();
-      if (!baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_TYPE) &&
-        baseHubspotConfig.getReportEndpoint().equals(ReportEndpoint.TOTALS)) {
+      TimePeriod period = sourceHubspotConfig.getTimePeriod();
+      if (!sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_TYPE) &&
+        sourceHubspotConfig.getReportEndpoint().equals(ReportEndpoint.TOTALS)) {
         switch (period) {
           case MONTHLY:
           case WEEKLY:
           case DAILY:
             failureCollector.addFailure(String.format("Time period '%s' is not valid for '%s'.",
-                                                      baseHubspotConfig.timePeriod,
-                                                      baseHubspotConfig.reportType),
+                                                      sourceHubspotConfig.timePeriod,
+                                                      sourceHubspotConfig.reportType),
                                         "Use summarized Time Periods for totals.")
-              .withConfigProperty(BaseHubspotConfig.TIME_PERIOD);
+              .withConfigProperty(SourceHubspotConfig.TIME_PERIOD);
         }
       }
     } catch (IllegalArgumentException e) {
-      failureCollector.addFailure(String.format("Time period '%s' is not valid.", baseHubspotConfig.timePeriod),
+      failureCollector.addFailure(String.format("Time period '%s' is not valid.", sourceHubspotConfig.timePeriod),
                                   "Select one of: total, daily, weekly, monthly, summarize/daily, " +
                                     "summarize/weekly, summarize/monthly")
-        .withConfigProperty(BaseHubspotConfig.TIME_PERIOD);
+        .withConfigProperty(SourceHubspotConfig.TIME_PERIOD);
     }
   }
 
-  static void validateFilters(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.FILTERS) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.TIME_PERIOD)) {
+  static void validateFilters(SourceHubspotConfig sourceHubspotConfig, FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.FILTERS) ||
+      sourceHubspotConfig.containsMacro(SourceHubspotConfig.TIME_PERIOD)) {
       return;
     }
-    List<String> filters = baseHubspotConfig.getFilters();
-    switch (baseHubspotConfig.getTimePeriod()) {
+    List<String> filters = sourceHubspotConfig.getFilters();
+    switch (sourceHubspotConfig.getTimePeriod()) {
       case DAILY:
       case WEEKLY:
       case MONTHLY:
@@ -68,17 +68,17 @@ public class ConfigValidator {
           failureCollector.addFailure("NO filters defined.",
                                       "When using daily, weekly, or monthly for the time_period," +
                                         " you must include at least one filter.")
-            .withConfigProperty(BaseHubspotConfig.FILTERS);
+            .withConfigProperty(SourceHubspotConfig.FILTERS);
         }
         for (String filter : filters) {
           if (filters == null || filters.isEmpty()) {
             failureCollector.addFailure("Filter must not be empty.",
-                                        null).withConfigProperty(BaseHubspotConfig.FILTERS);
+                                        null).withConfigProperty(SourceHubspotConfig.FILTERS);
           } else {
             if (!filter.matches("\\w+")) {
               failureCollector.addFailure(String.format("Filter '%s' is not a valid filter", filter),
                                           "Filter must one word without special symbols")
-                .withConfigProperty(BaseHubspotConfig.FILTERS);
+                .withConfigProperty(SourceHubspotConfig.FILTERS);
 
             }
           }
@@ -86,79 +86,80 @@ public class ConfigValidator {
     }
   }
 
-  static void validateReportType(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_TYPE)) {
+  static void validateReportType(SourceHubspotConfig sourceHubspotConfig, FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_TYPE)) {
       return;
     }
     try {
-      switch (baseHubspotConfig.getReportType()) {
+      switch (sourceHubspotConfig.getReportType()) {
         case REPORT_CATEGORY:
-          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_CATEGORY)) {
+          if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_CATEGORY)) {
             return;
           }
           try {
-            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportCategory);
+            sourceHubspotConfig.getReportEndpoint(sourceHubspotConfig.reportCategory);
           } catch (IllegalArgumentException e) {
             failureCollector.addFailure(String.format("Report Category '%s' is not valid.",
-                                                      baseHubspotConfig.reportCategory),
-                                        null).withConfigProperty(BaseHubspotConfig.REPORT_CATEGORY);
+                                                      sourceHubspotConfig.reportCategory),
+                                        null).withConfigProperty(SourceHubspotConfig.REPORT_CATEGORY);
           }
           break;
         case REPORT_OBJECT:
-          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_OBJECT)) {
+          if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_OBJECT)) {
             return;
           }
           try {
-            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportObject);
+            sourceHubspotConfig.getReportEndpoint(sourceHubspotConfig.reportObject);
           } catch (IllegalArgumentException e) {
             failureCollector.addFailure(String.format("Report Object '%s' is not valid.",
-                                                      baseHubspotConfig.reportObject),
-                                        null).withConfigProperty(BaseHubspotConfig.REPORT_OBJECT);
+                                                      sourceHubspotConfig.reportObject),
+                                        null).withConfigProperty(SourceHubspotConfig.REPORT_OBJECT);
           }
           break;
         case REPORT_CONTENT:
-          if (baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_CONTENT)) {
+          if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_CONTENT)) {
             return;
           }
           try {
-            baseHubspotConfig.getReportEndpoint(baseHubspotConfig.reportContent);
+            sourceHubspotConfig.getReportEndpoint(sourceHubspotConfig.reportContent);
           } catch (IllegalArgumentException e) {
             failureCollector.addFailure(String.format("Report Content '%s' is not valid.",
-                                                      baseHubspotConfig.reportContent),
-                                        null).withConfigProperty(BaseHubspotConfig.REPORT_CONTENT);
+                                                      sourceHubspotConfig.reportContent),
+                                        null).withConfigProperty(SourceHubspotConfig.REPORT_CONTENT);
           }
           break;
       }
     } catch (IllegalArgumentException e) {
-      failureCollector.addFailure(String.format("Report Type '%s' is not valid.", baseHubspotConfig.reportType),
-                                  null).withConfigProperty(BaseHubspotConfig.REPORT_TYPE);
+      failureCollector.addFailure(String.format("Report Type '%s' is not valid.", sourceHubspotConfig.reportType),
+                                  null).withConfigProperty(SourceHubspotConfig.REPORT_TYPE);
     }
   }
 
-  protected static void validateObjectType(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.OBJECT_TYPE)) {
+  protected static void validateObjectType(SourceHubspotConfig sourceHubspotConfig, FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(BaseHubspotConfig.OBJECT_TYPE)) {
       return;
     }
     try {
-      baseHubspotConfig.getObjectType();
+      sourceHubspotConfig.getObjectType();
     } catch (IllegalArgumentException e) {
-      failureCollector.addFailure(String.format("Object Type '%s' is not valid.", baseHubspotConfig.objectType),
+      failureCollector.addFailure(String.format("Object Type '%s' is not valid.", sourceHubspotConfig.objectType),
                                   null).withConfigProperty(BaseHubspotConfig.OBJECT_TYPE);
     }
   }
 
-  protected static void validateAuthorization(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.TIME_PERIOD) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.FILTERS) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.REPORT_TYPE) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.API_KEY) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.START_DATE) ||
-      baseHubspotConfig.containsMacro(BaseHubspotConfig.END_DATE)) {
+  protected static void validateAuthorization(SourceHubspotConfig sourceHubspotConfig,
+                                              FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.TIME_PERIOD) ||
+      sourceHubspotConfig.containsMacro(SourceHubspotConfig.FILTERS) ||
+      sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_TYPE) ||
+      sourceHubspotConfig.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
+      sourceHubspotConfig.containsMacro(BaseHubspotConfig.API_KEY) ||
+      sourceHubspotConfig.containsMacro(SourceHubspotConfig.START_DATE) ||
+      sourceHubspotConfig.containsMacro(SourceHubspotConfig.END_DATE)) {
       return;
     }
     try {
-      new HubspotHelper().getHubspotPage(baseHubspotConfig, null);
+      new HubspotHelper().getHubspotPage(sourceHubspotConfig, null);
     } catch (IOException e) {
       if (e.getMessage().toLowerCase().contains("forbidden")) {
         failureCollector.addFailure("Api endpoint not accessible with provided Api Key.", null)
@@ -169,36 +170,36 @@ public class ConfigValidator {
     }
   }
 
-  protected static void validateDateRange(BaseHubspotConfig baseHubspotConfig, FailureCollector failureCollector) {
-    if (baseHubspotConfig.containsMacro(BaseHubspotConfig.START_DATE)
-      || baseHubspotConfig.containsMacro(BaseHubspotConfig.END_DATE)) {
+  protected static void validateDateRange(SourceHubspotConfig sourceHubspotConfig, FailureCollector failureCollector) {
+    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.START_DATE)
+      || sourceHubspotConfig.containsMacro(SourceHubspotConfig.END_DATE)) {
       return;
     }
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyDDmm");
     Date startDate = null;
     Date endDate = null;
-    if (baseHubspotConfig.startDate == null || baseHubspotConfig.startDate.isEmpty()) {
+    if (sourceHubspotConfig.startDate == null || sourceHubspotConfig.startDate.isEmpty()) {
       failureCollector.addFailure("Start Date not defined for ANALYTICS object selected.",
                                   "Use YYYYMMDD date format.")
-        .withConfigProperty(BaseHubspotConfig.START_DATE);
+        .withConfigProperty(SourceHubspotConfig.START_DATE);
     }
-    if (baseHubspotConfig.endDate == null || baseHubspotConfig.endDate.isEmpty()) {
+    if (sourceHubspotConfig.endDate == null || sourceHubspotConfig.endDate.isEmpty()) {
       failureCollector.addFailure("End Date not defined for ANALYTICS object selected.",
                                   "Use YYYYMMDD date format.")
-        .withConfigProperty(BaseHubspotConfig.END_DATE);
+        .withConfigProperty(SourceHubspotConfig.END_DATE);
     }
-    if (baseHubspotConfig.startDate != null && baseHubspotConfig.endDate != null) {
+    if (sourceHubspotConfig.startDate != null && sourceHubspotConfig.endDate != null) {
       try {
-        startDate = simpleDateFormat.parse(baseHubspotConfig.startDate);
+        startDate = simpleDateFormat.parse(sourceHubspotConfig.startDate);
       } catch (ParseException e) {
         failureCollector.addFailure("Invalid startDate format.", "Use YYYYMMDD date format.")
-          .withConfigProperty(BaseHubspotConfig.START_DATE);
+          .withConfigProperty(SourceHubspotConfig.START_DATE);
       }
       try {
-        endDate = simpleDateFormat.parse(baseHubspotConfig.endDate);
+        endDate = simpleDateFormat.parse(sourceHubspotConfig.endDate);
       } catch (ParseException e) {
         failureCollector.addFailure("Invalid endDate format.", "Use YYYYMMDD date format.")
-          .withConfigProperty(BaseHubspotConfig.END_DATE);
+          .withConfigProperty(SourceHubspotConfig.END_DATE);
       }
       if (startDate != null &&
         endDate != null &&
