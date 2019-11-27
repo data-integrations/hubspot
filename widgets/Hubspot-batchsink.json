@@ -40,7 +40,7 @@
         },
         {
           "widget-type": "textbox",
-          "label": "Field Name",
+          "label": "Input Field Name",
           "name": "objectField"
         }
       ]

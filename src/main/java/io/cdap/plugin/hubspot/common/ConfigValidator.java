@@ -232,7 +232,7 @@ public class ConfigValidator {
         case EMAIL_SUBSCRIPTION :
         case RECENT_COMPANIES:
         default :
-          failureCollector.addFailure(String.format("Sink for Object Type '%s' is not supported.",
+          failureCollector.addFailure(String.format("Object Type '%s' is not supported.",
                                                     sinkHubspotConfig.objectType),
                                       null).withConfigProperty(SinkHubspotConfig.OBJECT_TYPE);
       }

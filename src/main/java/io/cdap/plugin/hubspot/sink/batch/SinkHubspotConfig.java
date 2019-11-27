@@ -19,35 +19,16 @@ import io.cdap.cdap.api.annotation.Description;
 import io.cdap.cdap.api.annotation.Macro;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.etl.api.FailureCollector;
-import io.cdap.plugin.common.ReferencePluginConfig;
+import io.cdap.plugin.hubspot.common.BaseHubspotConfig;
 import io.cdap.plugin.hubspot.common.ConfigValidator;
-import io.cdap.plugin.hubspot.common.ObjectType;
-
-import javax.annotation.Nullable;
 
 /**
  * Provides Sink configuration for accessing Hubspot API
  */
-public class SinkHubspotConfig extends ReferencePluginConfig {
+public class SinkHubspotConfig extends BaseHubspotConfig {
 
-  public static final String API_KEY = "apiKey";
-  public static final String OBJECT_TYPE = "objectType";
-  public static final String API_SERVER_URL = "apiServerUrl";
   public static final String OBJECT_FIELD = "objectField";
 
-  @Name(API_SERVER_URL)
-  @Description("Api Server Url. Not visible, by default null, can be redefined")
-  @Macro
-  @Nullable
-  public String apiServerUrl;
-  @Name(API_KEY)
-  @Description("OAuth2 API Key")
-  @Macro
-  public String apiKey;
-  @Name(OBJECT_TYPE)
-  @Description("Name of Object(s) to put to Hubspot.")
-  @Macro
-  public String objectType;
   @Name(OBJECT_FIELD)
   @Description("Name of Field with object description json.")
   @Macro
@@ -60,9 +41,4 @@ public class SinkHubspotConfig extends ReferencePluginConfig {
   public void validate(FailureCollector failureCollector) {
     ConfigValidator.validateSinkObjectType(this, failureCollector);
   }
-
-  public ObjectType getObjectType() {
-    return ObjectType.fromString(objectType);
-  }
-
 }

@@ -2,7 +2,7 @@
 
 Description
 -----------
-The plugin will allow users to put data to HubSpot CRM.
+The plugin allows users to put data to HubSpot CRM.
 
 Properties
 ----------
@@ -24,4 +24,4 @@ Properties
   [Tickets](https://developers.hubspot.com/docs/methods/tickets/create-ticket)
   
   
-  **Field Name:** Name of Field with object description json.
+  **Input Field Name:** Name of field with object description json.
