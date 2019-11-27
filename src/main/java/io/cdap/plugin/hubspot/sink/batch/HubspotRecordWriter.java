@@ -36,17 +36,17 @@ public class HubspotRecordWriter extends RecordWriter<NullWritable, String> {
   }
 
   @Override
-  public void write(NullWritable nullWritable, String fileFromFolder) throws IOException {
+  public void write(NullWritable nullWritable, String input) throws IOException {
     hubspotSinkHelper = new HubspotSinkHelper();
     try {
-      hubspotSinkHelper.executeHTTPService(fileFromFolder, sinkHubspotConfig);
+      hubspotSinkHelper.executeHTTPService(input, sinkHubspotConfig);
     } catch (Exception e) {
-      throw new IOException(e);
+      throw new RuntimeException("Submit record to Hubspot failed with:", e);
     }
   }
 
   @Override
   public void close(TaskAttemptContext taskAttemptContext) {
     //no-op
-}
+  }
 }

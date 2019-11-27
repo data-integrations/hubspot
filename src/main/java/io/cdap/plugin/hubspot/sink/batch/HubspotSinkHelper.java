@@ -17,6 +17,7 @@ package io.cdap.plugin.hubspot.sink.batch;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.awaitility.core.ConditionTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
-import static org.awaitility.pollinterval.FibonacciPollInterval.fibonacci;
+import static org.awaitility.pollinterval.IterativePollInterval.iterative;
 
 /**
  * Helper class to incorporate Hubspot sink api interaction
@@ -49,7 +50,7 @@ public class HubspotSinkHelper {
     try {
       Awaitility
         .await().with()
-        .pollInterval(fibonacci())
+        .pollInterval(iterative(duration -> duration.multiply(2)).startDuration(Duration.ONE_SECOND))
         .pollDelay(0L, TimeUnit.MILLISECONDS)
         .timeout(MAX_RETRY_DURATION, TimeUnit.SECONDS)
         .until(httpService::postInput);
