@@ -80,14 +80,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testContactLists() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Contact Lists")
-      .build();
-
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Contact Lists",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/contacts/v1/lists?hapikey=some-api-key&count=100"))
                            .willReturn(WireMock.aResponse()
@@ -106,13 +110,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testContacts() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Contacts")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Contacts",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/contacts/v1/lists/all/contacts/all?hapikey=some-api-key&count=100"))
@@ -132,13 +141,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testEmailEvents() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Email Events")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Email Events",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/email/public/v1/events?hapikey=some-api-key&limit=100"))
@@ -158,13 +172,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testEmailSubscription() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Email Subscription")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Email Subscription",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/email/public/v1/subscriptions/timeline?hapikey=some-api-key&limit=100"))
@@ -185,13 +204,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testRecentCompanies() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Recent Companies")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Recent Companies",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/companies/v2/companies/recent/modified?hapikey=some-api-key&count=100"))
@@ -211,13 +235,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testCompanies() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Companies")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Companies",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/companies/v2/companies/paged?hapikey=some-api-key&count=100"))
@@ -237,13 +266,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testDeals() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Deals")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Deals",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/deals/v1/deal/paged?hapikey=some-api-key&limit=100"))
@@ -263,13 +297,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testDealPipelines() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Deal Pipelines")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Deal Pipelines",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/crm-pipelines/v1/pipelines/deals?hapikey=some-api-key"))
@@ -285,14 +324,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testMarketingEmail() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Marketing Email")
-      .build();
-
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Marketing Email",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/marketing-emails/v1/emails?hapikey=some-api-key&limit=100"))
                            .willReturn(WireMock.aResponse()
@@ -311,13 +354,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testProducts() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Products")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Products",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/crm-objects/v1/objects/products/paged?hapikey=some-api-key"))
@@ -337,13 +385,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testTickets() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Tickets")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Tickets",
+                                                             "some-api-key",
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null,
+                                                             null);
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/crm-objects/v1/objects/tickets/paged?hapikey=some-api-key"))
@@ -363,18 +416,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsCategory() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Category")
-      .put(SourceHubspotConfig.REPORT_CATEGORY, "totals")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             null,
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Category",
+                                                             null,
+                                                             "totals",
+                                                             null,
+                                                             "total");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/totals/total" +
@@ -396,18 +449,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsContent() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Content")
-      .put(SourceHubspotConfig.REPORT_CONTENT, "standard-pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             null,
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Content",
+                                                             "standard-pages",
+                                                             null,
+                                                             null,
+                                                             "total");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/standard-pages/total" +
@@ -429,18 +482,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsObject() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Object")
-      .put(SourceHubspotConfig.REPORT_OBJECT, "pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             null,
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Object",
+                                                             null,
+                                                             null,
+                                                             "pages",
+                                                             "total");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/pages/total" +
@@ -462,18 +515,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsCategorySummarizeDaily() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "summarize/daily")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Category")
-      .put(SourceHubspotConfig.REPORT_CATEGORY, "totals")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             null,
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Category",
+                                                             null,
+                                                             "totals",
+                                                             null,
+                                                             "summarize/daily");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/totals/summarize/daily" +
@@ -491,19 +544,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsContentDaily() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "daily")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Content")
-      .put(SourceHubspotConfig.REPORT_CONTENT, "standard-pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .put(SourceHubspotConfig.FILTERS, "client")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             "client",
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Content",
+                                                             "standard-pages",
+                                                             null,
+                                                             null,
+                                                             "daily");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/standard-pages/daily" +
@@ -520,19 +572,18 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testAnalyticsObjectMonthly() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_SERVER_URL, getServerAddress())
-      .put(SourceHubspotConfig.API_KEY, "some-api-key")
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "monthly")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Object")
-      .put(SourceHubspotConfig.REPORT_OBJECT, "pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .put(SourceHubspotConfig.FILTERS, "client")
-      .build();
+    SourceHubspotConfig properties = new SourceHubspotConfig(testName.getMethodName(),
+                                                             getServerAddress(),
+                                                             "Analytics",
+                                                             "some-api-key",
+                                                             "client",
+                                                             "20190101",
+                                                             "20191111",
+                                                             "Object",
+                                                             null,
+                                                             null,
+                                                             "pages",
+                                                             "monthly");
 
     wireMockRule.stubFor(WireMock.get(
       WireMock.urlEqualTo("/analytics/v2/reports/pages/monthly" +
@@ -547,7 +598,40 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
     }
   }
 
-  public List<StructuredRecord> getPipelineResults(Map<String, String> sourceProperties) throws Exception {
+  public List<StructuredRecord> getPipelineResults(SourceHubspotConfig sourceHubspotConfig) throws Exception {
+    ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+    builder.put("referenceName", sourceHubspotConfig.referenceName);
+    builder.put(SourceHubspotConfig.API_KEY, sourceHubspotConfig.apiKey);
+    builder.put(SourceHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType);
+
+    if (sourceHubspotConfig.apiServerUrl != null) {
+      builder.put(SourceHubspotConfig.API_SERVER_URL, sourceHubspotConfig.apiServerUrl);
+    }
+    if (sourceHubspotConfig.filters != null) {
+      builder.put(SourceHubspotConfig.FILTERS, sourceHubspotConfig.filters);
+    }
+    if (sourceHubspotConfig.startDate != null) {
+      builder.put(SourceHubspotConfig.START_DATE, sourceHubspotConfig.startDate);
+    }
+    if (sourceHubspotConfig.endDate != null) {
+      builder.put(SourceHubspotConfig.END_DATE, sourceHubspotConfig.endDate);
+    }
+    if (sourceHubspotConfig.reportType != null) {
+      builder.put(SourceHubspotConfig.REPORT_TYPE, sourceHubspotConfig.reportType);
+    }
+    if (sourceHubspotConfig.reportContent != null) {
+      builder.put(SourceHubspotConfig.REPORT_CONTENT, sourceHubspotConfig.reportContent);
+    }
+    if (sourceHubspotConfig.reportCategory != null) {
+      builder.put(SourceHubspotConfig.REPORT_CATEGORY, sourceHubspotConfig.reportCategory);
+    }
+    if (sourceHubspotConfig.reportObject != null) {
+      builder.put(SourceHubspotConfig.REPORT_OBJECT, sourceHubspotConfig.reportObject);
+    }
+    if (sourceHubspotConfig.timePeriod != null) {
+      builder.put(SourceHubspotConfig.TIME_PERIOD, sourceHubspotConfig.timePeriod);
+    }
+    Map<String, String> sourceProperties = builder.build();
 
     ETLStage source = new ETLStage(HubspotBatchSource.NAME,
                                    new ETLPlugin(HubspotBatchSource.NAME, BatchSource.PLUGIN_TYPE,
