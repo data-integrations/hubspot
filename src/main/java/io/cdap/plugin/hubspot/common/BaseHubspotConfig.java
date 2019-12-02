@@ -50,6 +50,16 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
     super(referenceName);
   }
 
+  public BaseHubspotConfig(String referenceName,
+                           String apiServerUrl,
+                           String objectType,
+                           String apiKey) {
+    super(referenceName);
+    this.apiServerUrl = apiServerUrl;
+    this.objectType = objectType;
+    this.apiKey = apiKey;
+  }
+
   public ObjectType getObjectType() {
     return ObjectType.fromString(objectType);
   }

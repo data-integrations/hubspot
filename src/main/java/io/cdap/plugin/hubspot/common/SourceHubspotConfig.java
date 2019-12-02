@@ -87,6 +87,29 @@ public class SourceHubspotConfig extends BaseHubspotConfig {
     super(referenceName);
   }
 
+  public SourceHubspotConfig(String referenceName,
+                             String apiServerUrl,
+                             String objectType,
+                             String apiKey,
+                             String filters,
+                             String startDate,
+                             String endDate,
+                             String reportType,
+                             String reportContent,
+                             String reportCategory,
+                             String reportObject,
+                             String timePeriod) {
+    super(referenceName, apiServerUrl, objectType, apiKey);
+    this.filters = filters;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.reportType = reportType;
+    this.reportContent = reportContent;
+    this.reportCategory = reportCategory;
+    this.reportObject = reportObject;
+    this.timePeriod = timePeriod;
+  }
+
   public void validate(FailureCollector failureCollector) {
     ConfigValidator.validateObjectType(this, failureCollector);
     if (!containsMacro(OBJECT_TYPE) && getObjectType().equals(ObjectType.ANALYTICS)) {

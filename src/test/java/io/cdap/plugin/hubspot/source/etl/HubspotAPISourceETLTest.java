@@ -37,13 +37,19 @@ import io.cdap.cdap.test.DataSetManager;
 import io.cdap.cdap.test.TestConfiguration;
 import io.cdap.cdap.test.WorkflowManager;
 import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
+import io.cdap.plugin.hubspot.common.TestingHelper;
 import io.cdap.plugin.hubspot.source.batch.HubspotBatchSource;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -78,242 +84,388 @@ public class HubspotAPISourceETLTest extends HydratorTestBase {
 
   @Test
   public void testContactLists() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Contact Lists")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Contact Lists",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testContactlist.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testContacts() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Contacts")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Contacts",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testContact.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testEmailEvents() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Email Events")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Email Events",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testEmailSubscription() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Email Subscription")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Email Subscription",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testRecentCompanies() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Recent Companies")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Recent Companies",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testCompanies() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Companies")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Companies",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testCompany.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testDeals() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Deals")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Deals",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testDeal.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testDealPipelines() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Deal Pipelines")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Deal Pipelines",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      // randomize to avoid soft delete ERROR
+      TestingHelper.createTestObject(sourceHubspotConfig,
+                                     "{\"pipelineId\":\"testName" +
+                                       RandomStringUtils.random(20, false, true) +
+                                       "\",\"label\":\"test Name\",\"displayOrder\":2," +
+                                       "\"active\":true,\"stages\":[{\"stageId\":\"testStage" +
+                                       RandomStringUtils.random(20, false, true) +
+                                       "\",\"label\":\"test Stage\"," +
+                                       "\"displayOrder\":1,\"metadata\":{\"probability\":0.5}}" +
+                                       ",{\"stageId\":\"testStage2" +
+                                       RandomStringUtils.random(20, false, true) +
+                                       "\",\"label\":\"test Stage2\",\"displayOrder\":2," +
+                                       "\"metadata\":{\"probability\":1.0}}]}");
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testMarketingEmail() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Marketing Email")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Marketing Email",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testMarketingEmail.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testProducts() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Products")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Products",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testProduct.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testTickets() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Tickets")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Tickets",
+                                                                      apiKey,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null,
+                                                                      null);
+    try {
+      TestingHelper.createTestObject(sourceHubspotConfig, readResourceFile("testTicket.json"));
+      List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
+      TestingHelper.checkExist(sourceHubspotConfig, records, true);
+    } finally {
+      TestingHelper.checkAndDelete(sourceHubspotConfig, false);
+    }
   }
 
   @Test
   public void testAnalyticsCategory() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Category")
-      .put(SourceHubspotConfig.REPORT_CATEGORY, "totals")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      null,
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Category",
+                                                                      null,
+                                                                      "totals",
+                                                                      null,
+                                                                      "total");
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testAnalyticsContent() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Content")
-      .put(SourceHubspotConfig.REPORT_CONTENT, "standard-pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      null,
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Content",
+                                                                      "standard-pages",
+                                                                      null,
+                                                                      null,
+                                                                      "total");
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testAnalyticsObject() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "total")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Object")
-      .put(SourceHubspotConfig.REPORT_OBJECT, "pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      null,
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Object",
+                                                                      null,
+                                                                      null,
+                                                                      "pages",
+                                                                      "total");
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testAnalyticsCategorySummarizeDaily() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "summarize/daily")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Category")
-      .put(SourceHubspotConfig.REPORT_CATEGORY, "totals")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      null,
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Category",
+                                                                      null,
+                                                                      "totals",
+                                                                      null,
+                                                                      "summarize/daily");
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testAnalyticsContentDaily() throws Exception {
-
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "daily")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Content")
-      .put(SourceHubspotConfig.REPORT_CONTENT, "standard-pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .put(SourceHubspotConfig.FILTERS, "client")
-      .build();
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      "client",
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Content",
+                                                                      "standard-pages",
+                                                                      null,
+                                                                      null,
+                                                                      "daily");
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
   @Test
   public void testAnalyticsObjectMonthly() throws Exception {
+    SourceHubspotConfig sourceHubspotConfig = new SourceHubspotConfig(testName.getMethodName(),
+                                                                      null,
+                                                                      "Analytics",
+                                                                      apiKey,
+                                                                      "client",
+                                                                      "20190101",
+                                                                      "20191111",
+                                                                      "Object",
+                                                                      null,
+                                                                      null,
+                                                                      "pages",
+                                                                      "monthly");
 
-    Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", testName.getMethodName())
-      .put(SourceHubspotConfig.API_KEY, apiKey)
-      .put(SourceHubspotConfig.OBJECT_TYPE, "Analytics")
-      .put(SourceHubspotConfig.TIME_PERIOD, "monthly")
-      .put(SourceHubspotConfig.REPORT_TYPE, "Object")
-      .put(SourceHubspotConfig.REPORT_OBJECT, "pages")
-      .put(SourceHubspotConfig.START_DATE, "20190101")
-      .put(SourceHubspotConfig.END_DATE, "20191111")
-      .put(SourceHubspotConfig.FILTERS, "client")
-      .build();
-
-
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(sourceHubspotConfig);
   }
 
-  public List<StructuredRecord> getPipelineResults(Map<String, String> sourceProperties) throws Exception {
+  public List<StructuredRecord> getPipelineResults(SourceHubspotConfig sourceHubspotConfig) throws Exception {
+    ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+    builder.put("referenceName", sourceHubspotConfig.referenceName);
+    builder.put(SourceHubspotConfig.API_KEY, sourceHubspotConfig.apiKey);
+    builder.put(SourceHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType);
+
+    if (sourceHubspotConfig.apiServerUrl != null) {
+      builder.put(SourceHubspotConfig.API_SERVER_URL, sourceHubspotConfig.apiServerUrl);
+    }
+    if (sourceHubspotConfig.filters != null) {
+      builder.put(SourceHubspotConfig.FILTERS, sourceHubspotConfig.filters);
+    }
+    if (sourceHubspotConfig.startDate != null) {
+      builder.put(SourceHubspotConfig.START_DATE, sourceHubspotConfig.startDate);
+    }
+    if (sourceHubspotConfig.endDate != null) {
+      builder.put(SourceHubspotConfig.END_DATE, sourceHubspotConfig.endDate);
+    }
+    if (sourceHubspotConfig.reportType != null) {
+      builder.put(SourceHubspotConfig.REPORT_TYPE, sourceHubspotConfig.reportType);
+    }
+    if (sourceHubspotConfig.reportContent != null) {
+      builder.put(SourceHubspotConfig.REPORT_CONTENT, sourceHubspotConfig.reportContent);
+    }
+    if (sourceHubspotConfig.reportCategory != null) {
+      builder.put(SourceHubspotConfig.REPORT_CATEGORY, sourceHubspotConfig.reportCategory);
+    }
+    if (sourceHubspotConfig.reportObject != null) {
+      builder.put(SourceHubspotConfig.REPORT_OBJECT, sourceHubspotConfig.reportObject);
+    }
+    if (sourceHubspotConfig.timePeriod != null) {
+      builder.put(SourceHubspotConfig.TIME_PERIOD, sourceHubspotConfig.timePeriod);
+    }
+    Map<String, String> sourceProperties = builder.build();
 
     ETLStage source = new ETLStage(HubspotBatchSource.NAME,
                                    new ETLPlugin(HubspotBatchSource.NAME, BatchSource.PLUGIN_TYPE,
@@ -338,5 +490,10 @@ public class HubspotAPISourceETLTest extends HydratorTestBase {
     List<StructuredRecord> outputRecords = MockSink.readOutput(outputManager);
 
     return outputRecords;
+  }
+
+  protected String readResourceFile(String filename) throws URISyntaxException, IOException {
+    return new String(Files.readAllBytes(
+      Paths.get(getClass().getClassLoader().getResource(filename).toURI())));
   }
 }

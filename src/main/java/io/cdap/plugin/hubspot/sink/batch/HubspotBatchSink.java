@@ -21,19 +21,15 @@ import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
 import io.cdap.cdap.api.data.batch.Output;
 import io.cdap.cdap.api.data.format.StructuredRecord;
-import io.cdap.cdap.api.data.schema.Schema;
 import io.cdap.cdap.api.dataset.lib.KeyValue;
 import io.cdap.cdap.etl.api.Emitter;
 import io.cdap.cdap.etl.api.FailureCollector;
 import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.batch.BatchSink;
 import io.cdap.cdap.etl.api.batch.BatchSinkContext;
-import io.cdap.plugin.common.LineageRecorder;
 import org.apache.hadoop.io.NullWritable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.stream.Collectors;
 
 /**
  * Writes data to HubSpot CRM.
@@ -65,18 +61,7 @@ public class HubspotBatchSink extends BatchSink<StructuredRecord, NullWritable, 
     FailureCollector collector = context.getFailureCollector();
     config.validate(collector);
     collector.getOrThrowException();
-    Schema inputSchema = context.getInputSchema();
     context.addOutput(Output.of(config.referenceName, new HubspotOutputFormatProvider(config)));
-
-    LineageRecorder lineageRecorder = new LineageRecorder(context, config.referenceName);
-    lineageRecorder.createExternalDataset(inputSchema);
-    if (inputSchema.getFields() != null && !inputSchema.getFields().isEmpty()) {
-      String operationDescription = "Wrote to HubSpot CRM";
-      lineageRecorder.recordWrite("Write", operationDescription,
-                                  inputSchema.getFields().stream()
-                                    .map(Schema.Field::getName)
-                                    .collect(Collectors.toList()));
-    }
   }
 
   @Override
