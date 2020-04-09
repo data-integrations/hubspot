@@ -549,6 +549,71 @@ public abstract class HubspotMockAPISourceETLTest extends BaseHubspotETLTest {
     }
   }
 
+  public List<StructuredRecord> getPipelineResults(SourceHubspotConfig sourceHubspotConfig) throws Exception {
+    ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+    builder.put("referenceName", sourceHubspotConfig.referenceName);
+    builder.put(SourceHubspotConfig.API_KEY, sourceHubspotConfig.apiKey);
+    builder.put(SourceHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType);
+
+    if (sourceHubspotConfig.apiServerUrl != null) {
+      builder.put(SourceHubspotConfig.API_SERVER_URL, sourceHubspotConfig.apiServerUrl);
+    }
+    if (sourceHubspotConfig.filters != null) {
+      builder.put(SourceHubspotConfig.FILTERS, sourceHubspotConfig.filters);
+    }
+    if (sourceHubspotConfig.startDate != null) {
+      builder.put(SourceHubspotConfig.START_DATE, sourceHubspotConfig.startDate);
+    }
+    if (sourceHubspotConfig.endDate != null) {
+      builder.put(SourceHubspotConfig.END_DATE, sourceHubspotConfig.endDate);
+    }
+    if (sourceHubspotConfig.reportType != null) {
+      builder.put(SourceHubspotConfig.REPORT_TYPE, sourceHubspotConfig.reportType);
+    }
+    if (sourceHubspotConfig.reportContent != null) {
+      builder.put(SourceHubspotConfig.REPORT_CONTENT, sourceHubspotConfig.reportContent);
+    }
+    if (sourceHubspotConfig.reportCategory != null) {
+      builder.put(SourceHubspotConfig.REPORT_CATEGORY, sourceHubspotConfig.reportCategory);
+    }
+    if (sourceHubspotConfig.reportObject != null) {
+      builder.put(SourceHubspotConfig.REPORT_OBJECT, sourceHubspotConfig.reportObject);
+    }
+    if (sourceHubspotConfig.timePeriod != null) {
+      builder.put(SourceHubspotConfig.TIME_PERIOD, sourceHubspotConfig.timePeriod);
+    }
+    Map<String, String> sourceProperties = builder.build();
+
+    ETLStage source = new ETLStage(HubspotBatchSource.NAME,
+                                   new ETLPlugin(HubspotBatchSource.NAME, BatchSource.PLUGIN_TYPE,
+                                                 sourceProperties, null));
+
+    String outputDatasetName = "output-batchsourcetest_" + testName.getMethodName();
+    ETLStage sink = new ETLStage("sink", MockSink.getPlugin(outputDatasetName));
+
+    ETLBatchConfig etlConfig = ETLBatchConfig.builder()
+      .addStage(source)
+      .addStage(sink)
+      .addConnection(source.getName(), sink.getName())
+      .build();
+
+    ApplicationId pipelineId = NamespaceId.DEFAULT.app("HubspotBatch_" + testName.getMethodName());
+    ApplicationManager appManager = deployApplication(pipelineId, new AppRequest<>(APP_ARTIFACT, etlConfig));
+
+    WorkflowManager workflowManager = appManager.getWorkflowManager(SmartWorkflow.NAME);
+    workflowManager.startAndWaitForRun(ProgramRunStatus.COMPLETED, 5, TimeUnit.MINUTES);
+
+    DataSetManager<Table> outputManager = getDataset(outputDatasetName);
+    List<StructuredRecord> outputRecords = MockSink.readOutput(outputManager);
+
+    return outputRecords;
+  }
+
+  protected String readResourceFile(String filename) throws URISyntaxException, IOException {
+    return new String(Files.readAllBytes(
+      Paths.get(getClass().getClassLoader().getResource(filename).toURI())));
+  }
+
   protected String getServerAddress() {
     return "http://localhost:" + wireMockRule.port();
   }
