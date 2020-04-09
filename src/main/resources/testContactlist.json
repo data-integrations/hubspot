@@ -1,0 +1,1 @@
+{  "name": "testName",  "dynamic": true,  "portalId": 62515,  "filters":  [    [{      "operator": "EQ",      "value": "@hubspot",      "property": "twitterhandle", "type": "string"    }]  ]}

@@ -1,0 +1,8 @@
+{
+  "lists": [
+    { "testobj" : 2 },
+    { "testobj" : 3 }
+  ],
+  "offset": 20,
+  "has-more": false
+}
