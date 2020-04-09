@@ -1,0 +1,252 @@
+{
+  "metadata": {
+    "spec-version": "1.5"
+  },
+  "configuration-groups": [
+    {
+      "label": "Basic",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "hidden",
+          "name": "apiServerUrl"
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "API Key",
+          "name": "apiKey"
+        },
+        {
+          "name": "objectType",
+          "label": "Objects",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "Analytics",
+            "values": [
+              "Contact Lists",
+              "Contacts",
+              "Email Events",
+              "Email Subscription",
+              "Recent Campaigns",
+              "Analytics",
+              "Companies",
+              "Deals",
+              "Deal Pipelines",
+              "Marketing Email",
+              "Products",
+              "Tickets"
+            ]
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Pull Frequency",
+          "name": "pullFrequency",
+          "widget-attributes": {
+            "values": [
+              "15 min",
+              "30 min",
+              "1 hour",
+              "4 hour",
+              "8 hour"
+            ],
+            "default": "GET"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Analytics",
+      "properties": [
+        {
+          "name": "timePeriod",
+          "label": "Time Period",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "total",
+              "daily",
+              "weekly",
+              "monthly",
+              "summarize/daily",
+              "summarize/weekly",
+              "summarize/monthly"
+            ]
+          }
+        },
+        {
+          "name": "reportType",
+          "label": "Report Type",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "Category",
+            "values": [
+              "Content",
+              "Category",
+              "Object"
+            ]
+          }
+        },
+        {
+          "name": "reportContent",
+          "label": "Report Content",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "landing-pages",
+              "standard-pages",
+              "blog-posts",
+              "listing-pages",
+              "knowledge-articles"
+            ]
+          }
+        },
+        {
+          "name": "reportCategory",
+          "label": "Report Category",
+          "widget-type": "select",
+          "widget-attributes": {
+            "default": "totals",
+            "values": [
+              "totals",
+              "sessions",
+              "sources",
+              "geolocation",
+              "utm-campaigns",
+              "utm-contents",
+              "utm-mediums",
+              "utm-sources",
+              "utm-terms"
+            ]
+          }
+        },
+        {
+          "name": "reportObject",
+          "label": "Report Object",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "event-completions",
+              "forms",
+              "pages",
+              "social-assists"
+            ]
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Start Date",
+          "name": "startDate",
+          "widget-attributes" : {
+            "placeholder": "YYYYMMDD format."
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "End Date",
+          "name": "endDate",
+          "widget-attributes" : {
+            "placeholder": "YYYYMMDD format."
+          }
+        },
+        {
+          "name": "filters",
+          "label": "Filters",
+          "widget-type": "dsv",
+          "widget-attributes": {
+            "delimiter": ","
+          }
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "widget-type": "non-editable-schema-editor",
+      "schema": {
+        "name": "etlSchemaBody",
+        "type": "record",
+        "fields": [
+          {
+            "name": "objectType",
+            "type": "string"
+          },
+          {
+            "name": "object",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "filters": [
+    {
+      "name": "Select Analytics properties",
+      "condition": {
+        "expression": "objectType == 'Analytics'"
+      },
+      "show": [
+        {
+          "name": "timePeriod",
+          "type": "property"
+        },
+        {
+          "name": "reportType",
+          "type": "property"
+        },
+        {
+          "name": "startDate",
+          "type": "property"
+        },
+        {
+          "name": "endDate",
+          "type": "property"
+        },
+        {
+          "name": "filters",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Content",
+      "condition": {
+        "expression": "reportType == 'Content'"
+      },
+      "show": [
+        {
+          "name": "reportContent",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Category",
+      "condition": {
+        "expression": "reportType == 'Category'"
+      },
+      "show": [
+        {
+          "name": "reportCategory",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Report Type Object",
+      "condition": {
+        "expression": "reportType == 'Object'"
+      },
+      "show": [
+        {
+          "name": "reportObject",
+          "type": "property"
+        }
+      ]
+    }
+  ]
+}
