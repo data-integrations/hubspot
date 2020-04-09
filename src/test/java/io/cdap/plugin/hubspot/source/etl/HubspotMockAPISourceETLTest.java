@@ -17,66 +17,17 @@ package io.cdap.plugin.hubspot.source.etl;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.google.common.collect.ImmutableMap;
-import io.cdap.cdap.api.artifact.ArtifactSummary;
 import io.cdap.cdap.api.data.format.StructuredRecord;
-import io.cdap.cdap.api.dataset.table.Table;
-import io.cdap.cdap.datapipeline.DataPipelineApp;
-import io.cdap.cdap.datapipeline.SmartWorkflow;
-import io.cdap.cdap.etl.api.batch.BatchSource;
-import io.cdap.cdap.etl.mock.batch.MockSink;
-import io.cdap.cdap.etl.mock.test.HydratorTestBase;
-import io.cdap.cdap.etl.proto.v2.ETLBatchConfig;
-import io.cdap.cdap.etl.proto.v2.ETLPlugin;
-import io.cdap.cdap.etl.proto.v2.ETLStage;
-import io.cdap.cdap.proto.ProgramRunStatus;
-import io.cdap.cdap.proto.artifact.AppRequest;
-import io.cdap.cdap.proto.id.ApplicationId;
-import io.cdap.cdap.proto.id.ArtifactId;
-import io.cdap.cdap.proto.id.NamespaceId;
-import io.cdap.cdap.test.ApplicationManager;
-import io.cdap.cdap.test.DataSetManager;
-import io.cdap.cdap.test.TestConfiguration;
-import io.cdap.cdap.test.WorkflowManager;
 import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
-import io.cdap.plugin.hubspot.source.batch.HubspotBatchSource;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-public class HubspotMockAPISourceETLTest extends HydratorTestBase {
-  @ClassRule
-  public static final TestConfiguration CONFIG = new TestConfiguration("explore.enabled", false);
-  private static final ArtifactSummary APP_ARTIFACT = new ArtifactSummary("data-pipeline", "3.2.0");
+public abstract class HubspotMockAPISourceETLTest extends BaseHubspotETLTest {
   @Rule
-  public TestName testName = new TestName();
-  @Rule
-  public WireMockRule wireMockRule = new WireMockRule();
-
-  @BeforeClass
-  public static void setupTestClass() throws Exception {
-    ArtifactId parentArtifact = NamespaceId.DEFAULT.artifact(APP_ARTIFACT.getName(), APP_ARTIFACT.getVersion());
-
-    // add the artifact and mock plugins
-    setupBatchArtifacts(parentArtifact, DataPipelineApp.class);
-
-    // add our plugins artifact with the artifact as its parent.
-    // this will make our plugins available.
-    addPluginArtifact(NamespaceId.DEFAULT.artifact("example-plugins", "1.0.0"),
-                      parentArtifact,
-                      HubspotBatchSource.class);
-  }
+  public WireMockRule wireMockRule = new WireMockRule(9854);
 
   @Test
   public void testContactLists() throws Exception {
@@ -100,7 +51,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/contacts/v1/lists?hapikey=some-api-key&count=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testContactListsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Contact Lists", records.get(i).get("objectType"));
@@ -131,7 +82,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/contacts/v1/lists/all/contacts/all?hapikey=some-api-key&count=100&vidOffset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testContactsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Contacts", records.get(i).get("objectType"));
@@ -162,7 +113,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/email/public/v1/events?hapikey=some-api-key&limit=100&offset=CgoY__________9_"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testEmailEventsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Email Events", records.get(i).get("objectType"));
@@ -194,7 +145,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&limit=100&offset=CP__________fw"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testEmailSubscriptionP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Email Subscription", records.get(i).get("objectType"));
@@ -225,7 +176,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/companies/v2/companies/recent/modified?hapikey=some-api-key&count=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testRecentCompaniesP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Recent Companies", records.get(i).get("objectType"));
@@ -256,7 +207,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/companies/v2/companies/paged?hapikey=some-api-key&count=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testCompaniesP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Companies", records.get(i).get("objectType"));
@@ -287,7 +238,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/deals/v1/deal/paged?hapikey=some-api-key&limit=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testDealsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Deals", records.get(i).get("objectType"));
@@ -314,7 +265,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/crm-pipelines/v1/pipelines/deals?hapikey=some-api-key"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testDealPipelinesP1.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Deal Pipelines", records.get(i).get("objectType"));
@@ -344,7 +295,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/marketing-emails/v1/emails?hapikey=some-api-key&limit=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testMarketingEmailP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Marketing Email", records.get(i).get("objectType"));
@@ -375,7 +326,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/crm-objects/v1/objects/products/paged?hapikey=some-api-key&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testProductsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Products", records.get(i).get("objectType"));
@@ -406,7 +357,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
       WireMock.urlEqualTo("/crm-objects/v1/objects/tickets/paged?hapikey=some-api-key&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testTicketsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Tickets", records.get(i).get("objectType"));
@@ -439,7 +390,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&start=20190101&end=20191111&limit=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
@@ -472,7 +423,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&start=20190101&end=20191111&limit=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
@@ -505,7 +456,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&start=20190101&end=20191111&limit=100&offset=2"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsP2.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 4);
     Assert.assertEquals(4, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
@@ -534,7 +485,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsDailyP1.json"))));
 
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 1);
     Assert.assertEquals(1, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
@@ -562,7 +513,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&start=20190101&end=20191111&f=client&limit=100"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsDailyP1.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 1);
     Assert.assertEquals(1, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
@@ -590,7 +541,7 @@ public class HubspotMockAPISourceETLTest extends HydratorTestBase {
                             "?hapikey=some-api-key&start=20190101&end=20191111&f=client&limit=100"))
                            .willReturn(WireMock.aResponse()
                                          .withBody(readResourceFile("testAnalyticsDailyP1.json"))));
-    List<StructuredRecord> records = getPipelineResults(properties);
+    List<StructuredRecord> records = getPipelineResults(properties, 1);
     Assert.assertEquals(1, records.size());
     for (int i = 0; i < records.size(); i++) {
       Assert.assertEquals("Analytics", records.get(i).get("objectType"));
