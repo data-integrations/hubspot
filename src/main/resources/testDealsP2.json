@@ -1,0 +1,8 @@
+{
+  "deals": [
+    { "testobj" : 2 },
+    { "testobj" : 3 }
+  ],
+  "offset": 2,
+  "hasMore": false
+}

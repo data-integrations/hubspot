@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "spec-version": "1.5"
+  },
+  "configuration-groups": [
+    {
+      "label": "Basic",
+      "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Reference Name",
+          "name": "referenceName"
+        },
+        {
+          "widget-type": "hidden",
+          "name": "apiServerUrl"
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "API Key",
+          "name": "apiKey"
+        },
+        {
+          "name": "objectType",
+          "label": "Objects",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "Contact Lists",
+              "Contacts",
+              "Companies",
+              "Deals",
+              "Deal Pipelines",
+              "Marketing Email",
+              "Products",
+              "Tickets"
+            ]
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Input Field Name",
+          "name": "objectField"
+        }
+      ]
+    }
+  ],
+  "outputs": []
+}
