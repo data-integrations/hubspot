@@ -22,7 +22,7 @@
         },
         {
           "name": "objectType",
-          "label": "Objects",
+          "label": "Object",
           "widget-type": "select",
           "widget-attributes": {
             "default": "Analytics",

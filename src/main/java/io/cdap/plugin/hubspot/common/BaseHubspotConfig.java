@@ -38,7 +38,7 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   @Nullable
   public String apiServerUrl;
   @Name(OBJECT_TYPE)
-  @Description("Name of Object(s) to pull from Hubspot.")
+  @Description("Name of object to pull from Hubspot.")
   @Macro
   public String objectType;
   @Name(API_KEY)

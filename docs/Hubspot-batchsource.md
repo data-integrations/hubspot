@@ -12,7 +12,7 @@ Properties
 
 **API Key:** OAuth2 API Key.
 
-**Object(s) to pull:** Names of Object(s) to pull from Hubspot. Select from Contact Lists, Contacts, Email Events, 
+**Object to pull:** Name of object to pull from Hubspot. Select from Contact Lists, Contacts, Email Events, 
 Email Subscription, Recent Companies, Analytics, Companies, Deals, Deal Pipelines, Marketing Email, Products, Tickets.
 
 ### Analytics
