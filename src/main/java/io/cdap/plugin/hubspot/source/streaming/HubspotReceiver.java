@@ -33,10 +33,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Implementation of Spark receiver to receive Salesforce push topic events.
  */
-public class HubspotReceiver extends Receiver<String> {
+public class HubspotReceiver extends Receiver<String> implements HasOffset {
   private static final Logger LOG = LoggerFactory.getLogger(HubspotReceiver.class);
   private static final String RECEIVER_THREAD_NAME = "hubspot_api_listener";
   private final HubspotStreamingSourceConfig config;
+  private String startOffset = null;
+  private Long endOffset = Long.MAX_VALUE;
 
   HubspotReceiver(HubspotStreamingSourceConfig config) throws IOException {
     super(StorageLevel.MEMORY_AND_DISK_2());
@@ -44,10 +46,23 @@ public class HubspotReceiver extends Receiver<String> {
   }
 
   @Override
+  public void setStartOffset(Long startOffset) {
+    if (startOffset != null) {
+      //startOffset - 1, because offset should be inclusive
+      this.startOffset = String.valueOf(startOffset == 0L ? 0 : startOffset - 1);
+    }
+  }
+
+  public HubspotStreamingSourceConfig getConfig() {
+    return config;
+  }
+
+  @Override
+  @SuppressWarnings("FutureReturnValueIgnored")
   public void onStart() {
     ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
-      .setNameFormat(RECEIVER_THREAD_NAME + "-%d")
-      .build();
+            .setNameFormat(RECEIVER_THREAD_NAME + "-%d")
+            .build();
 
     Executors.newSingleThreadExecutor(namedThreadFactory).submit(this::receive);
   }
@@ -58,13 +73,21 @@ public class HubspotReceiver extends Receiver<String> {
     // is designed to stop by itself if isStopped() returns false
   }
 
+  @Override
+  public Long getEndOffset() {
+    return endOffset;
+  }
+
   private void receive() {
     try {
-      HubspotPagesIterator hubspotPagesIterator = new HubspotPagesIterator(config);
+      HubspotPagesIterator hubspotPagesIterator = new HubspotPagesIterator(config, startOffset);
 
       while (!isStopped()) {
+        this.endOffset = Long.parseLong(hubspotPagesIterator.getCurrentPage().getOffset());
         if (hubspotPagesIterator.hasNext()) {
-          store(hubspotPagesIterator.next().toString());
+          if (!isStopped()) {
+            store(hubspotPagesIterator.next().toString());
+          }
         } else {
           Integer minutesToSleep = config.getPullFrequency().getMinutesValue();
           LOG.debug(String.format("Waiting for '%d' minutes to pull.", minutesToSleep));
@@ -72,11 +95,11 @@ public class HubspotReceiver extends Receiver<String> {
 
           // reload current page
           HubspotPage currentPage = new HubspotHelper().getHubspotPage(config,
-                                                                       hubspotPagesIterator.getCurrentPageOffset());
+                  hubspotPagesIterator.getCurrentPageOffset());
           int iteratorPosition = hubspotPagesIterator.getIteratorPosition();
 
           hubspotPagesIterator = new HubspotPagesIterator(config, currentPage,
-                                                          hubspotPagesIterator.getCurrentPageOffset());
+                  hubspotPagesIterator.getCurrentPageOffset());
           hubspotPagesIterator.setIteratorPosition(iteratorPosition);
         }
       }

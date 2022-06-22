@@ -28,7 +28,7 @@ public class HubspotPagesIterator implements Iterator<JsonElement> {
   private HubspotPage currentPage;
   private Iterator<JsonElement> currentPageIterator;
   private int iteratorPosition = 0;
-  private String currentPageOffset = null;
+  private String currentPageOffset;
 
   /**
    * Constructor for HubspotPagesIterator object.
@@ -43,8 +43,12 @@ public class HubspotPagesIterator implements Iterator<JsonElement> {
     this.currentPageOffset = currentPageOffset;
   }
 
+  public HubspotPagesIterator(SourceHubspotConfig config, String offset) throws IOException {
+    this(config, new HubspotHelper().getHubspotPage(config, offset), offset);
+  }
+
   public HubspotPagesIterator(SourceHubspotConfig config) throws IOException {
-    this(config, new HubspotHelper().getHubspotPage(config, null), null);
+    this(config, null);
   }
 
   /**
@@ -89,6 +93,10 @@ public class HubspotPagesIterator implements Iterator<JsonElement> {
 
   public int getIteratorPosition() {
     return iteratorPosition;
+  }
+
+  public HubspotPage getCurrentPage() {
+    return currentPage;
   }
 
   /**
