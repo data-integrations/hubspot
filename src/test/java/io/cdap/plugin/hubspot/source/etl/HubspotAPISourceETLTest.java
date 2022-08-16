@@ -24,6 +24,9 @@ import org.junit.Test;
 import java.util.List;
 
 public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
+  private static final String startDate = "20000101";
+  private static final String endDate = "21000101";
+
   protected static String apiKey;
 
   @Test
@@ -280,8 +283,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       null,
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Category",
                                                                       null,
                                                                       "totals",
@@ -297,8 +300,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       null,
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Content",
                                                                       "standard-pages",
                                                                       null,
@@ -314,8 +317,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       null,
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Object",
                                                                       null,
                                                                       null,
@@ -331,8 +334,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       null,
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Category",
                                                                       null,
                                                                       "totals",
@@ -348,8 +351,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       "client",
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Content",
                                                                       "standard-pages",
                                                                       null,
@@ -365,8 +368,8 @@ public abstract class HubspotAPISourceETLTest extends BaseHubspotETLTest {
                                                                       "Analytics",
                                                                       apiKey,
                                                                       "client",
-                                                                      "20190101",
-                                                                      "20191111",
+                                                                      startDate,
+                                                                      endDate,
                                                                       "Object",
                                                                       null,
                                                                       null,

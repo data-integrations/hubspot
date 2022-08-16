@@ -38,13 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Helper class to incorporate Hubspot api interaction
+ * A class containing helpful methods for testing.
  */
 public class TestingHelper {
 
-  public static void checkAndDelete(SourceHubspotConfig config, boolean assertation)
-    throws IOException, URISyntaxException, InterruptedException {
-    if (assertation) {
+  public static void checkAndDelete(SourceHubspotConfig config, boolean assertion)
+          throws IOException, URISyntaxException, InterruptedException {
+    if (assertion) {
       Thread.sleep(20000);
     }
     boolean exist = false;
@@ -52,23 +52,21 @@ public class TestingHelper {
     while (hubspotPagesIterator.hasNext()) {
       JsonElement record = hubspotPagesIterator.next();
       String id = getId(config, record);
-      if (record.toString().contains("testName") || getDetiles(config, id).contains("testName")) {
+      if (record.toString().contains("testName") || getDetails(config, id).contains("testName")) {
         exist = true;
         deleteObject(config, id);
       }
 
     }
-    if (assertation) {
+    if (assertion) {
       Assert.assertEquals(true, exist);
     }
   }
 
-  private static String getDetiles(SourceHubspotConfig config, String id) throws URISyntaxException, IOException {
+  private static String getDetails(SourceHubspotConfig config, String id) throws URISyntaxException, IOException {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-    ArrayList<Header> clientHeaders = new ArrayList<>();
-
-    httpClientBuilder.setDefaultHeaders(clientHeaders);
+    httpClientBuilder.setDefaultHeaders(new ArrayList<>());
 
     CloseableHttpClient client = httpClientBuilder.build();
     URIBuilder builder = null;
@@ -77,7 +75,7 @@ public class TestingHelper {
         builder = new URIBuilder("https://api.hubapi.com/contacts/v1/lists/" + id);
         break;
       case CONTACTS:
-        builder = new URIBuilder("https://api.hubapi.com/contacts/v1/contact/vid/" + id);
+        builder = new URIBuilder("https://api.hubapi.com/contacts/v1/contact/vid/" + id + "/profile");
         break;
       case COMPANIES:
         builder = new URIBuilder("https://api.hubapi.com/companies/v2/companies/" + id);
@@ -119,9 +117,7 @@ public class TestingHelper {
   private static void deleteObject(SourceHubspotConfig config, String id) throws URISyntaxException, IOException {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
-    ArrayList<Header> clientHeaders = new ArrayList<>();
-
-    httpClientBuilder.setDefaultHeaders(clientHeaders);
+    httpClientBuilder.setDefaultHeaders(new ArrayList<>());
 
     CloseableHttpClient client = httpClientBuilder.build();
     URIBuilder builder = null;
@@ -188,11 +184,11 @@ public class TestingHelper {
 
 
   public static void checkExist(SourceHubspotConfig config, List<StructuredRecord> records, boolean expected)
-    throws IOException, URISyntaxException {
+          throws IOException, URISyntaxException {
     boolean exist = false;
     for (StructuredRecord record : records) {
       String id = getId(config, new JsonParser().parse(record.get("object").toString()));
-      if (record.get("object").toString().contains("testName") || getDetiles(config, id).contains("testName")) {
+      if (record.get("object").toString().contains("testName") || getDetails(config, id).contains("testName")) {
         exist = true;
       }
     }
@@ -200,7 +196,7 @@ public class TestingHelper {
   }
 
   public static void createTestObject(SourceHubspotConfig config, String object)
-    throws URISyntaxException, IOException, InterruptedException {
+          throws URISyntaxException, IOException, InterruptedException {
     checkAndDelete(config, false);
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
     ArrayList<Header> clientHeaders = new ArrayList<>();

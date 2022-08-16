@@ -314,7 +314,7 @@ public class HubspotSinkTest extends HydratorTestBase {
     MockSource.writeInput(inputManager, input);
     WorkflowManager manager = appManager.getWorkflowManager(SmartWorkflow.NAME);
     manager.start();
-    manager.waitForRun(ProgramRunStatus.COMPLETED, 5, TimeUnit.MINUTES);
+    manager.waitForRun(ProgramRunStatus.COMPLETED, 1, TimeUnit.MINUTES);
   }
 
   protected String readResourceFile(String filename) throws URISyntaxException, IOException {

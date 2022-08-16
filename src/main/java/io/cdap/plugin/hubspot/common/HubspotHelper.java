@@ -77,16 +77,16 @@ public class HubspotHelper {
     while (true) {
       CloseableHttpResponse response = client.execute(request);
       StatusLine statusLine = response.getStatusLine();
-      if (statusLine.getStatusCode() >= 300) {
-        if (500 > statusLine.getStatusCode() &&
+      if (statusLine.getStatusCode() < 300) {
+        return response;
+      }
+      if (500 > statusLine.getStatusCode() &&
           statusLine.getStatusCode() >= 400) {
           throw new IOException(statusLine.getReasonPhrase());
-        }
-        if (++count == MAX_TRIES) {
-          throw new IOException(statusLine.getReasonPhrase());
-        }
       }
-      return response;
+      if (++count == MAX_TRIES) {
+        throw new IOException(statusLine.getReasonPhrase());
+      }
     }
   }
 
