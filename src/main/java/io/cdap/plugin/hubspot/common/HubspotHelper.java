@@ -20,13 +20,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.cdap.cdap.api.data.format.StructuredRecord;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -41,7 +44,11 @@ import javax.annotation.Nullable;
  */
 public class HubspotHelper {
 
-  private static final int MAX_TRIES = 3;
+  private static final String AUTHORIZATION_HEADER_NAME = "Authorization";
+  private static final String AUTHORIZATION_TOKEN_PREFIX = "Bearer ";
+  private static final String HUBSPOT_API_KEY_PARAMETER = "hapikey";
+
+  private static final int MAX_RETRIES_DEFAULT = 3;
 
   /**
    * Number of objects in one page to pull.
@@ -50,73 +57,104 @@ public class HubspotHelper {
 
   /**
    * Return the instance of HubspotPage.
-   * @param sourceHubspotConfig the source hubspot config
+   * @param config the source hubspot config
    * @param offset the offset is string type
    * @return the instance of HubspotPage
    * @throws IOException on issues with data reading
    */
-  public HubspotPage getHubspotPage(SourceHubspotConfig sourceHubspotConfig, String offset) throws IOException {
-    HttpGet request = getRequest(sourceHubspotConfig, offset);
-
-    CloseableHttpResponse response = downloadPage(sourceHubspotConfig, request);
+  @Nullable
+  public HubspotPage getHubspotPage(SourceHubspotConfig config, String offset) throws IOException {
+    CloseableHttpResponse response = executeRequestWithRetries(getRequest(config, offset));
     HttpEntity entity = response.getEntity();
     String result;
     if (entity != null) {
       result = EntityUtils.toString(entity);
-      return parseJson(sourceHubspotConfig, result);
+      return parseJson(config, result);
     }
     return null;
   }
 
-  private CloseableHttpResponse downloadPage(SourceHubspotConfig sourceHubspotConfig,
-                                             HttpGet request) throws IOException {
+  /** Executes the given request until it's successful
+   * or the maximum attempts number is exceeded (then {@link IOException} is thrown). */
+  public static CloseableHttpResponse executeRequestWithRetries(HttpRequestBase request) throws IOException {
+    return executeRequestWithRetries(request, MAX_RETRIES_DEFAULT);
+  }
+
+  /** Executes the given request until it's successful
+   * or maximum retries attempts is exceeded (then {@link IOException} is thrown). */
+  public static CloseableHttpResponse executeRequestWithRetries(HttpRequestBase request, int maxRetries)
+          throws IOException {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
     CloseableHttpClient client = httpClientBuilder.build();
 
     int count = 0;
-    while (true) {
+    StatusLine statusLine = null;
+    while (count <= maxRetries) {
+      ++count;
       CloseableHttpResponse response = client.execute(request);
-      StatusLine statusLine = response.getStatusLine();
-      if (statusLine.getStatusCode() < 300) {
+      statusLine = response.getStatusLine();
+      if (200 <= statusLine.getStatusCode() && statusLine.getStatusCode() < 300) {
         return response;
       }
-      if (500 > statusLine.getStatusCode() &&
-          statusLine.getStatusCode() >= 400) {
-          throw new IOException(statusLine.getReasonPhrase());
-      }
-      if (++count == MAX_TRIES) {
-        throw new IOException(statusLine.getReasonPhrase());
-      }
+    }
+    throw new IOException(String.format("Request execution max attempts (%d) exceeded, reason: '%s'",
+            maxRetries + 1, statusLine == null ? "" : statusLine.getReasonPhrase()));
+  }
+
+  public static HttpRequestBase addCredentialsToRequest(HttpRequestBase request, BaseHubspotConfig config) {
+    return addCredentialsToRequest(request, config.getApiKey(), config.getAccessToken());
+  }
+
+  private static HttpRequestBase addCredentialsToRequest(
+          HttpRequestBase request, String apiKey, String accessToken) {
+    if (accessToken != null && !accessToken.isEmpty()) {
+      request.addHeader(getAuthHeader(accessToken));
+      return request;
+    }
+    try {
+      request.setURI(addApiKey(request.getURI(), apiKey));
+      return request;
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(
+              String.format("A failure occurred while adding API key '%s' to URI '%s'.", apiKey, request.getURI()));
     }
   }
 
-  private HttpGet getRequest(SourceHubspotConfig sourceHubspotConfig, String offset) {
-    URI uri = null;
+  private static URI addApiKey(URI uri, String apiKey) throws URISyntaxException {
+    if (apiKey == null || apiKey.isEmpty()) {
+      return uri;
+    }
+    return new URIBuilder(uri).setParameter(HUBSPOT_API_KEY_PARAMETER, apiKey).build();
+  }
+
+  private static Header getAuthHeader(String accessToken) {
+    return new BasicHeader(AUTHORIZATION_HEADER_NAME, AUTHORIZATION_TOKEN_PREFIX + accessToken);
+  }
+
+  private HttpRequestBase getRequest(SourceHubspotConfig config, String offset) {
+    URI uri;
     try {
-      URIBuilder b = new URIBuilder(getEndpoint(sourceHubspotConfig));
-      if (sourceHubspotConfig.apiKey != null) {
-        b.addParameter("hapikey", sourceHubspotConfig.apiKey);
+      URIBuilder b = new URIBuilder(getEndpoint(config));
+      if (config.startDate != null) {
+        b.addParameter("start", config.startDate);
       }
-      if (sourceHubspotConfig.startDate != null) {
-        b.addParameter("start", sourceHubspotConfig.startDate);
+      if (config.endDate != null) {
+        b.addParameter("end", config.endDate);
       }
-      if (sourceHubspotConfig.endDate != null) {
-        b.addParameter("end", sourceHubspotConfig.endDate);
-      }
-      for (String filter : sourceHubspotConfig.getFilters()) {
+      for (String filter : config.getFilters()) {
         b.addParameter("f", filter);
       }
-      if (getLimitPropertyName(sourceHubspotConfig) != null) {
-        b.addParameter(getLimitPropertyName(sourceHubspotConfig), PAGE_SIZE);
+      if (getLimitPropertyName(config) != null) {
+        b.addParameter(getLimitPropertyName(config), PAGE_SIZE);
       }
-      if (offset != null && getOffsetPropertyName(sourceHubspotConfig) != null) {
-        b.addParameter(getOffsetPropertyName(sourceHubspotConfig), offset);
+      if (offset != null && getOffsetPropertyName(config) != null) {
+        b.addParameter(getOffsetPropertyName(config), offset);
       }
       uri = b.build();
+      return addCredentialsToRequest(new HttpGet(uri), config);
     } catch (URISyntaxException e) {
       throw new RuntimeException("Can't build valid uri", e);
     }
-    return new HttpGet(uri);
   }
 
   private HubspotPage parseJson(SourceHubspotConfig sourceHubspotConfig, String json) throws IOException {

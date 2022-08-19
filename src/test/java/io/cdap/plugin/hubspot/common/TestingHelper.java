@@ -24,6 +24,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -98,9 +99,7 @@ public class TestingHelper {
         builder.setParameter("properties", "subject");
         break;
     }
-    builder.setParameter("hapikey", config.apiKey);
-
-    HttpGet request = new HttpGet(builder.build());
+    HttpRequestBase request = HubspotHelper.addCredentialsToRequest(new HttpGet(builder.build()), config);
 
     CloseableHttpResponse response = client.execute(request);
 
@@ -147,9 +146,7 @@ public class TestingHelper {
         builder = new URIBuilder("https://api.hubapi.com/crm-objects/v1/objects/tickets/" + id);
         break;
     }
-    builder.setParameter("hapikey", config.apiKey);
-
-    HttpDelete request = new HttpDelete(builder.build());
+    HttpRequestBase request = HubspotHelper.addCredentialsToRequest(new HttpDelete(builder.build()), config);
 
     CloseableHttpResponse response = client.execute(request);
     HttpEntity entity = response.getEntity();
@@ -231,8 +228,7 @@ public class TestingHelper {
         builder = new URIBuilder("https://api.hubapi.com/crm-objects/v1/objects/tickets/");
         break;
     }
-    builder.setParameter("hapikey", config.apiKey);
-    HttpPost request = new HttpPost(builder.build());
+    HttpPost request = (HttpPost) HubspotHelper.addCredentialsToRequest(new HttpPost(builder.build()), config);
 
     request.setEntity(new StringEntity(object));
 

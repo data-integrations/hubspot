@@ -34,12 +34,7 @@ public class HubspotStreamingAPISourceETLTest extends HubspotAPISourceETLTest {
 
   @BeforeClass
   public static void setupTestClass() throws Exception {
-    apiKey = System.getProperty("hubspot.api.key");
-
-    if (apiKey == null || apiKey.isEmpty()) {
-      throw new IllegalArgumentException("hubspot.api.key system property must not be empty.");
-    }
-
+    getCredentials();
     StreamingInitializer.setupTestClass();
   }
 }

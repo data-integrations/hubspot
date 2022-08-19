@@ -26,7 +26,6 @@ import io.cdap.cdap.datastreams.DataStreamsSparkLauncher;
 import io.cdap.cdap.etl.api.batch.BatchSource;
 import io.cdap.cdap.etl.api.streaming.StreamingSource;
 import io.cdap.cdap.etl.mock.batch.MockSink;
-import io.cdap.cdap.etl.mock.test.HydratorTestBase;
 import io.cdap.cdap.etl.proto.v2.DataStreamsConfig;
 import io.cdap.cdap.etl.proto.v2.ETLBatchConfig;
 import io.cdap.cdap.etl.proto.v2.ETLPlugin;
@@ -42,6 +41,7 @@ import io.cdap.cdap.test.ProgramManager;
 import io.cdap.cdap.test.SparkManager;
 import io.cdap.cdap.test.TestConfiguration;
 import io.cdap.cdap.test.WorkflowManager;
+import io.cdap.plugin.hubspot.common.BaseETLTest;
 import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
 import io.cdap.plugin.hubspot.source.batch.HubspotBatchSource;
 import io.cdap.plugin.hubspot.source.streaming.HubspotStreamingSource;
@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public abstract class BaseHubspotETLTest extends HydratorTestBase {
+public abstract class BaseHubspotETLTest extends BaseETLTest {
   @Rule
   public TestName testName = new TestName();
   @ClassRule
@@ -81,7 +81,8 @@ public abstract class BaseHubspotETLTest extends HydratorTestBase {
   private Map<String, String> getPropertiesFromConfig(SourceHubspotConfig sourceHubspotConfig) {
     ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
     builder.put("referenceName", sourceHubspotConfig.referenceName);
-    builder.put(SourceHubspotConfig.API_KEY, sourceHubspotConfig.apiKey);
+    builder.put(SourceHubspotConfig.API_KEY, sourceHubspotConfig.getApiKey());
+    builder.put(SourceHubspotConfig.ACCESS_TOKEN, sourceHubspotConfig.getAccessToken());
     builder.put(SourceHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType);
 
     if (sourceHubspotConfig.apiServerUrl != null) {

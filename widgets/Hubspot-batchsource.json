@@ -4,7 +4,38 @@
   },
   "configuration-groups": [
     {
-      "label": "Basic",
+      "label": "Authorization",
+      "properties": [
+        {
+          "name": "authorizationMethod",
+          "label": "Authorization method",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "API key",
+              "Private app access token"
+            ]
+          }
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "API key",
+          "name": "apiKey"
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "Private app access token",
+          "name": "accessToken"
+        },
+        {
+          "widget-type" : "hidden",
+          "label": "OAuth Information",
+          "name": "oAuthInfo"
+        }
+      ]
+    },
+    {
+      "label": "Common properties",
       "properties": [
         {
           "widget-type": "textbox",
@@ -16,28 +47,22 @@
           "name": "apiServerUrl"
         },
         {
-          "widget-type": "securekey-text",
-          "label": "API Key",
-          "name": "apiKey"
-        },
-        {
           "name": "objectType",
-          "label": "Object",
+          "label": "Objects",
           "widget-type": "select",
           "widget-attributes": {
-            "default": "Analytics",
             "values": [
-              "Contact Lists",
-              "Contacts",
-              "Email Events",
-              "Email Subscription",
-              "Recent Companies",
               "Analytics",
               "Companies",
-              "Deals",
+              "Contact Lists",
+              "Contacts",
               "Deal Pipelines",
+              "Deals",
+              "Email Events",
+              "Email Subscription",
               "Marketing Email",
               "Products",
+              "Recently Modified Companies",
               "Tickets"
             ]
           }
@@ -170,6 +195,30 @@
   ],
   "filters": [
     {
+      "name": "Select API key",
+      "condition": {
+        "expression": "authorizationMethod == 'API key'"
+      },
+      "show": [
+        {
+          "name": "apiKey",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Select private app access token",
+      "condition": {
+        "expression": "authorizationMethod == 'Private app access token'"
+      },
+      "show": [
+        {
+          "name": "accessToken",
+          "type": "property"
+        }
+      ]
+    },
+    {
       "name": "Select Analytics properties",
       "condition": {
         "expression": "objectType == 'Analytics'"
@@ -200,7 +249,7 @@
     {
       "name": "Report Type Content",
       "condition": {
-        "expression": "reportType == 'Content'"
+        "expression": "objectType == 'Analytics' && reportType == 'Content'"
       },
       "show": [
         {
@@ -212,7 +261,7 @@
     {
       "name": "Report Type Category",
       "condition": {
-        "expression": "reportType == 'Category'"
+        "expression": "objectType == 'Analytics' && reportType == 'Category'"
       },
       "show": [
         {
@@ -224,7 +273,7 @@
     {
       "name": "Report Type Object",
       "condition": {
-        "expression": "reportType == 'Object'"
+        "expression": "objectType == 'Analytics' && reportType == 'Object'"
       },
       "show": [
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Cask Data, Inc.
+ * Copyright © 2020 Cask Data, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,7 +26,6 @@ import io.cdap.cdap.datapipeline.DataPipelineApp;
 import io.cdap.cdap.datapipeline.SmartWorkflow;
 import io.cdap.cdap.etl.api.batch.BatchSink;
 import io.cdap.cdap.etl.mock.batch.MockSource;
-import io.cdap.cdap.etl.mock.test.HydratorTestBase;
 import io.cdap.cdap.etl.proto.v2.ETLBatchConfig;
 import io.cdap.cdap.etl.proto.v2.ETLPlugin;
 import io.cdap.cdap.etl.proto.v2.ETLStage;
@@ -39,6 +38,7 @@ import io.cdap.cdap.test.ApplicationManager;
 import io.cdap.cdap.test.DataSetManager;
 import io.cdap.cdap.test.TestConfiguration;
 import io.cdap.cdap.test.WorkflowManager;
+import io.cdap.plugin.hubspot.common.BaseETLTest;
 import io.cdap.plugin.hubspot.common.SourceHubspotConfig;
 import io.cdap.plugin.hubspot.common.TestingHelper;
 import io.cdap.plugin.hubspot.sink.batch.HubspotBatchSink;
@@ -59,9 +59,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test for Hubspot Sink
+ * A collection of tests for {@link HubspotBatchSink}.
  */
-public class HubspotSinkTest extends HydratorTestBase {
+public class HubspotSinkTest extends BaseETLTest {
   @ClassRule
   public static final TestConfiguration CONFIG = new TestConfiguration("explore.enabled", false);
 
@@ -74,16 +74,10 @@ public class HubspotSinkTest extends HydratorTestBase {
   private static final Schema inputSchema = Schema.recordOf(
     "input-record",
     Schema.Field.of("body", Schema.of(Schema.Type.STRING)));
-  protected static String baseURL;
-
-  private static String apiKey;
 
   @BeforeClass
   public static void setupTestClass() throws Exception {
-    apiKey = System.getProperty("hubspot.api.key");
-    if (apiKey == null || apiKey.isEmpty()) {
-      throw new IllegalArgumentException("hubspot.api.key system property must not be empty.");
-    }
+    getCredentials();
 
     setupBatchArtifacts(BATCH_ARTIFACT_ID, DataPipelineApp.class);
     addPluginArtifact(NamespaceId.DEFAULT.artifact("example-plugins", "1.0.0"), BATCH_ARTIFACT_ID,
@@ -96,6 +90,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Contacts",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -118,6 +113,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Companies",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -141,6 +137,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Contact Lists",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -164,6 +161,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Deals",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -187,6 +185,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Deal Pipelines",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -221,6 +220,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Marketing Email",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -244,6 +244,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Products",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -267,6 +268,7 @@ public class HubspotSinkTest extends HydratorTestBase {
                                                                       null,
                                                                       "Tickets",
                                                                       apiKey,
+                                                                      accessToken,
                                                                       null,
                                                                       null,
                                                                       null,
@@ -287,11 +289,12 @@ public class HubspotSinkTest extends HydratorTestBase {
   private void executeSink(SourceHubspotConfig sourceHubspotConfig, String object) throws Exception {
 
     Map<String, String> properties = new ImmutableMap.Builder<String, String>()
-      .put("referenceName", sourceHubspotConfig.referenceName)
-      .put(SinkHubspotConfig.API_KEY, sourceHubspotConfig.apiKey)
-      .put(SinkHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType)
-      .put(SinkHubspotConfig.OBJECT_FIELD, "body")
-      .build();
+            .put("referenceName", sourceHubspotConfig.referenceName)
+            .put(SinkHubspotConfig.API_KEY, sourceHubspotConfig.getApiKey())
+            .put(SinkHubspotConfig.ACCESS_TOKEN, sourceHubspotConfig.getAccessToken())
+            .put(SinkHubspotConfig.OBJECT_TYPE, sourceHubspotConfig.objectType)
+            .put(SinkHubspotConfig.OBJECT_FIELD, "body")
+            .build();
 
     List<StructuredRecord> input = ImmutableList.of(
       StructuredRecord.builder(inputSchema).set("body", object).build()

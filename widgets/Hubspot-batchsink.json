@@ -4,7 +4,38 @@
   },
   "configuration-groups": [
     {
-      "label": "Basic",
+      "label": "Authorization",
+      "properties": [
+        {
+          "name": "authorizationMethod",
+          "label": "Authorization method",
+          "widget-type": "select",
+          "widget-attributes": {
+            "values": [
+              "API key",
+              "Private app access token"
+            ]
+          }
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "API Key",
+          "name": "apiKey"
+        },
+        {
+          "widget-type": "securekey-text",
+          "label": "Private app access token",
+          "name": "accessToken"
+        },
+        {
+          "widget-type" : "hidden",
+          "label": "OAuth Information",
+          "name": "oAuthInfo"
+        }
+      ]
+    },
+    {
+      "label": "Properties",
       "properties": [
         {
           "widget-type": "textbox",
@@ -45,5 +76,31 @@
       ]
     }
   ],
-  "outputs": []
+  "outputs": [],
+  "filters": [
+    {
+      "name": "Select API key",
+      "condition": {
+        "expression": "authorizationMethod == 'API key'"
+      },
+      "show": [
+        {
+          "name": "apiKey",
+          "type": "property"
+        }
+      ]
+    },
+    {
+      "name": "Select private app access token",
+      "condition": {
+        "expression": "authorizationMethod == 'Private app access token'"
+      },
+      "show": [
+        {
+          "name": "accessToken",
+          "type": "property"
+        }
+      ]
+    }
+  ]
 }
