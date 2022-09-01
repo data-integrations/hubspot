@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.cdap.plugin.hubspot.common.HubspotHelper;
 import io.cdap.plugin.hubspot.common.HubspotPage;
 import io.cdap.plugin.hubspot.common.HubspotPagesIterator;
+import org.apache.beam.sdk.io.sparkreceiver.HasOffset;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.receiver.Receiver;
 import org.slf4j.Logger;
