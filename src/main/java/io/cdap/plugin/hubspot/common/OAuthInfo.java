@@ -15,22 +15,24 @@
  */
 package io.cdap.plugin.hubspot.common;
 
-/** A class for storing the OAuth information returned by the {@code ${oauth}} macro function. */
+/**
+ * A class for storing the OAuth information returned by the {@code ${oauth}} macro function.
+ */
 public final class OAuthInfo {
 
-    private final String accessToken;
-    private final String instanceURL;
+  private final String accessToken;
+  private final String instanceURL;
 
-    public OAuthInfo(String accessToken, String instanceURL) {
-        this.accessToken = accessToken;
-        this.instanceURL = instanceURL;
-    }
+  public OAuthInfo(String accessToken, String instanceURL) {
+    this.accessToken = accessToken;
+    this.instanceURL = instanceURL;
+  }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
+  public String getAccessToken() {
+    return accessToken;
+  }
 
-    public String getInstanceURL() {
-        return instanceURL;
-    }
+  public String getInstanceURL() {
+    return instanceURL;
+  }
 }

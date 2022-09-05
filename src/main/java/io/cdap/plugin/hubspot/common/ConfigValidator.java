@@ -156,14 +156,14 @@ public class ConfigValidator {
   protected static void validateAuthorization(SourceHubspotConfig config,
                                               FailureCollector failureCollector) {
     if (config.containsMacro(SourceHubspotConfig.TIME_PERIOD) ||
-            config.containsMacro(SourceHubspotConfig.FILTERS) ||
-            config.containsMacro(SourceHubspotConfig.REPORT_TYPE) ||
-            config.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
-            config.containsMacro(BaseHubspotConfig.API_KEY) ||
-            config.containsMacro(BaseHubspotConfig.ACCESS_TOKEN) ||
-            config.containsMacro(BaseHubspotConfig.OAUTH_INFO) ||
-            config.containsMacro(SourceHubspotConfig.START_DATE) ||
-            config.containsMacro(SourceHubspotConfig.END_DATE)) {
+        config.containsMacro(SourceHubspotConfig.FILTERS) ||
+        config.containsMacro(SourceHubspotConfig.REPORT_TYPE) ||
+        config.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
+        config.containsMacro(BaseHubspotConfig.API_KEY) ||
+        config.containsMacro(BaseHubspotConfig.ACCESS_TOKEN) ||
+        config.containsMacro(BaseHubspotConfig.OAUTH_INFO) ||
+        config.containsMacro(SourceHubspotConfig.START_DATE) ||
+        config.containsMacro(SourceHubspotConfig.END_DATE)) {
       return;
     }
     try {
@@ -172,10 +172,10 @@ public class ConfigValidator {
       if (e.getMessage().toLowerCase().contains("forbidden")) {
         if (!config.getApiKey().isEmpty()) {
           failureCollector.addFailure("The API endpoint is not accessible with the provided API Key.", null)
-                  .withConfigProperty(BaseHubspotConfig.API_KEY);
+              .withConfigProperty(BaseHubspotConfig.API_KEY);
         } else {
           failureCollector.addFailure("The API endpoint is not accessible with the provided access token.", null)
-                  .withConfigProperty(BaseHubspotConfig.ACCESS_TOKEN);
+              .withConfigProperty(BaseHubspotConfig.ACCESS_TOKEN);
         }
       } else {
         failureCollector.addFailure("Api endpoint not accessible with provided configuration.", null);

@@ -20,20 +20,21 @@ import io.cdap.cdap.etl.mock.test.HydratorTestBase;
 import javax.annotation.Nullable;
 
 public abstract class BaseETLTest extends HydratorTestBase {
-    @Nullable
-    protected static String apiKey = null;
-    @Nullable
-    protected static String accessToken;
 
-    protected static void getCredentials() {
-        accessToken = System.getProperty("hubspot.access.token");
-        if (accessToken == null || accessToken.isEmpty()) {
-            accessToken = null;
-            apiKey = System.getProperty("hubspot.api.key");
-            if (apiKey == null || apiKey.isEmpty()) {
-                throw new IllegalArgumentException("Either hubspot.access.token or " +
-                        "hubspot.api.key system property must be present and not empty.");
-            }
-        }
+  @Nullable
+  protected static String apiKey = null;
+  @Nullable
+  protected static String accessToken;
+
+  protected static void getCredentials() {
+    accessToken = System.getProperty("hubspot.access.token");
+    if (accessToken == null || accessToken.isEmpty()) {
+      accessToken = null;
+      apiKey = System.getProperty("hubspot.api.key");
+      if (apiKey == null || apiKey.isEmpty()) {
+        throw new IllegalArgumentException(
+            "Either hubspot.access.token or " + "hubspot.api.key system property must be present and not empty.");
+      }
     }
+  }
 }
