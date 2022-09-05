@@ -5,11 +5,11 @@ A batch sink that inserts objects into Hubspot.
 
 ### Authorization
 
-**Authorization method:** Hubspot account API Key.
+**Authorization method:** Select either Hubspot account API key or private app access token option.
 
 **API Key:** Hubspot account API Key (Deprecated. See this [guide](https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app) for migrating to using a private app access token).
 
-**Private app access token:** Private app access token. The app should be allowed to read/write the respective type (selected below) of Hubspot objects.
+**Private app access token:** Private app access token. The app should be allowed to write the respective type (selected below) of Hubspot objects.
 
 ### Properties
 
