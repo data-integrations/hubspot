@@ -55,7 +55,7 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   @Nullable
   public String apiKey;
   @Name(ACCESS_TOKEN)
-  @Description("Private app access token")
+  @Description("Private App Access Token")
   @Macro
   @Nullable
   public String accessToken;

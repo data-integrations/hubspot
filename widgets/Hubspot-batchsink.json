@@ -12,8 +12,8 @@
           "widget-type": "select",
           "widget-attributes": {
             "values": [
-              "API key",
-              "Private app access token"
+              "API Key",
+              "Private App Access Token"
             ]
           }
         },
@@ -24,7 +24,7 @@
         },
         {
           "widget-type": "securekey-text",
-          "label": "Private app access token",
+          "label": "Private App Access Token",
           "name": "accessToken"
         },
         {
@@ -79,9 +79,9 @@
   "outputs": [],
   "filters": [
     {
-      "name": "Select API key",
+      "name": "Select API Key",
       "condition": {
-        "expression": "authorizationMethod == 'API key'"
+        "expression": "authorizationMethod == 'API Key'"
       },
       "show": [
         {
@@ -91,9 +91,9 @@
       ]
     },
     {
-      "name": "Select private app access token",
+      "name": "Select Private App Access Token",
       "condition": {
-        "expression": "authorizationMethod == 'Private app access token'"
+        "expression": "authorizationMethod == 'Private App Access Token'"
       },
       "show": [
         {
