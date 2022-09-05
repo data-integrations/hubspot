@@ -93,8 +93,15 @@ public class HubspotHelper {
       ++count;
       CloseableHttpResponse response = client.execute(request);
       statusLine = response.getStatusLine();
-      if (200 <= statusLine.getStatusCode() && statusLine.getStatusCode() < 300) {
+      int statusCode = statusLine.getStatusCode();
+      if (200 <= statusCode && statusCode < 300) {
         return response;
+      }
+      if (400 <= statusCode && statusCode < 500) {
+        if (statusCode == 403) {
+          throw new IOException("Hubspot authorization failed: " + statusLine.getReasonPhrase());
+        }
+        throw new IOException("The Hubspot API endpoint is not accessible: " + statusLine.getReasonPhrase());
       }
     }
     throw new IOException(String.format("Request execution max attempts (%d) exceeded, reason: '%s'",

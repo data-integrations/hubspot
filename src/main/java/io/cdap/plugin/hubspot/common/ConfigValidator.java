@@ -169,17 +169,7 @@ public class ConfigValidator {
     try {
       new HubspotHelper().getHubspotPage(config, null);
     } catch (IOException e) {
-      if (e.getMessage().toLowerCase().contains("forbidden")) {
-        if (!config.getApiKey().isEmpty()) {
-          failureCollector.addFailure("The API endpoint is not accessible with the provided API Key.", null)
-              .withConfigProperty(BaseHubspotConfig.API_KEY);
-        } else {
-          failureCollector.addFailure("The API endpoint is not accessible with the provided access token.", null)
-              .withConfigProperty(BaseHubspotConfig.ACCESS_TOKEN);
-        }
-      } else {
-        failureCollector.addFailure("Api endpoint not accessible with provided configuration.", null);
-      }
+      failureCollector.addFailure(e.getMessage(), null);
     }
   }
 
