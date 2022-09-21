@@ -49,7 +49,7 @@ public class HubspotReceiver extends Receiver<String> implements HasOffset {
   @Override
   public void setStartOffset(Long startOffset) {
     if (startOffset != null) {
-      //startOffset - 1, because offset should be inclusive
+      // startOffset - 1, because offset should be inclusive.
       this.startOffset = String.valueOf(startOffset == 0L ? 0 : startOffset - 1);
     }
   }
@@ -106,7 +106,7 @@ public class HubspotReceiver extends Receiver<String> implements HasOffset {
       }
     } catch (Exception e) {
       String errorMessage = "Exception while receiving messages from hubspot";
-      /* TO DO  https://issues.cask.co/browse/PLUGIN-357
+      /* TODO  https://issues.cask.co/browse/PLUGIN-357
       The receiver will get terminated on error and stop receiving messages.
       Retry Logic needs to be implemented.
       */
