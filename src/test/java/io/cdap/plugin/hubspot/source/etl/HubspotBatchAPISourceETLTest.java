@@ -16,7 +16,12 @@
 package io.cdap.plugin.hubspot.source.etl;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
+/**
+ * Ignored as this requires HubSpot credentials.
+ */
+@Ignore
 public class HubspotBatchAPISourceETLTest extends HubspotAPISourceETLTest {
   @Override
   public TestsRunner getTestRunner() {

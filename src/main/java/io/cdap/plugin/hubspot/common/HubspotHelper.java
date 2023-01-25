@@ -122,8 +122,8 @@ public class HubspotHelper {
       request.setURI(addApiKey(request.getURI(), apiKey));
       return request;
     } catch (URISyntaxException e) {
-      throw new RuntimeException(
-              String.format("A failure occurred while adding API key '%s' to URI '%s'.", apiKey, request.getURI()));
+      throw new RuntimeException(String.format("A failure occurred while adding API key '%s' to URI '%s'.", apiKey,
+                                               request.getURI()));
     }
   }
 

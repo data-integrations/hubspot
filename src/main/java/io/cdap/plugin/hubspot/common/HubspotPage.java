@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
  */
 public class HubspotPage {
 
-  private List<JsonElement> hubspotObjects;
-  private SourceHubspotConfig hubspotConfig;
-  private String offset;
-  private Boolean hasNext;
+  private final List<JsonElement> hubspotObjects;
+  private final SourceHubspotConfig hubspotConfig;
+  private final String offset;
+  private final Boolean hasNext;
 
   /**
    * Constructor for HubspotPage object.

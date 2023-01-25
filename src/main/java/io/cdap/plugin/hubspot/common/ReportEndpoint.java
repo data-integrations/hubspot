@@ -69,7 +69,7 @@ public enum ReportEndpoint {
   PAGES("pages"),
   SOCIAL_ASSISTS("social-assists");
 
-  private String stringValue;
+  private final String stringValue;
 
   ReportEndpoint(String stringValue) {
     this.stringValue = stringValue;

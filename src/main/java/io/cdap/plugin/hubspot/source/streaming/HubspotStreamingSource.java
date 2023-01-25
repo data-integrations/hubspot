@@ -37,7 +37,7 @@ import java.io.IOException;
 public class HubspotStreamingSource extends StreamingSource<StructuredRecord> {
   static final String NAME = "Hubspot";
   static final String DESCRIPTION = "Streams data updates from Hubspot";
-  private HubspotStreamingSourceConfig config;
+  private final HubspotStreamingSourceConfig config;
 
   public HubspotStreamingSource(HubspotStreamingSourceConfig config) {
     this.config = config;

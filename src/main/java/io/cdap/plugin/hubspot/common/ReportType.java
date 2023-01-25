@@ -30,7 +30,7 @@ public enum ReportType {
   REPORT_CATEGORY("Category"),
   REPORT_OBJECT("Object");
 
-  private String stringValue;
+  private final String stringValue;
 
   ReportType(String stringValue) {
     this.stringValue = stringValue;
