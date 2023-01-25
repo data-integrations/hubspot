@@ -41,7 +41,7 @@ public class HubspotBatchSink extends BatchSink<StructuredRecord, NullWritable, 
 
   private static final Logger LOG = LoggerFactory.getLogger(HubspotBatchSink.class);
 
-  private SinkHubspotConfig config;
+  private final SinkHubspotConfig config;
 
   public static final String NAME = "Hubspot";
 

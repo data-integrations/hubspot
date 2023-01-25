@@ -46,6 +46,7 @@ import io.cdap.plugin.hubspot.sink.batch.SinkHubspotConfig;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -60,7 +61,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A collection of tests for {@link HubspotBatchSink}.
+ * This test is ignored by default because it requires Hubspot credentials.
  */
+@Ignore
 public class HubspotSinkTest extends BaseETLTest {
   @ClassRule
   public static final TestConfiguration CONFIG = new TestConfiguration("explore.enabled", false);

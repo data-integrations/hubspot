@@ -42,7 +42,7 @@ public enum TimePeriod {
   SUMMARIZE_WEEKLY("summarize/weekly"),
   SUMMARIZE_MONTHLY("summarize/monthly");
 
-  private String stringValue;
+  private final String stringValue;
 
   TimePeriod(String stringValue) {
     this.stringValue = stringValue;

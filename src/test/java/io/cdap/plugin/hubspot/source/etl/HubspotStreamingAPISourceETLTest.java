@@ -20,7 +20,12 @@ import io.cdap.cdap.etl.spark.Compat;
 import io.cdap.cdap.test.TestConfiguration;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 
+/**
+ * Ignored as this requires HubSpot credentials.
+ */
+@Ignore
 public class HubspotStreamingAPISourceETLTest extends HubspotAPISourceETLTest {
   @ClassRule
   public static final TestConfiguration CONFIG_STREAMING =

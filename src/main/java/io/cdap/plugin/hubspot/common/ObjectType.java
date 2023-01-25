@@ -39,7 +39,7 @@ public enum ObjectType {
   PRODUCTS("Products"),
   TICKETS("Tickets");
 
-  private String stringValue;
+  private final String stringValue;
 
   ObjectType(String stringValue) {
     this.stringValue = stringValue;

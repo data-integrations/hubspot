@@ -44,7 +44,7 @@ import java.util.List;
 public class TestingHelper {
 
   public static void checkAndDelete(SourceHubspotConfig config, boolean assertion)
-          throws IOException, URISyntaxException, InterruptedException {
+    throws IOException, URISyntaxException, InterruptedException {
     if (assertion) {
       Thread.sleep(20000);
     }
@@ -181,7 +181,7 @@ public class TestingHelper {
 
 
   public static void checkExist(SourceHubspotConfig config, List<StructuredRecord> records, boolean expected)
-          throws IOException, URISyntaxException {
+    throws IOException, URISyntaxException {
     boolean exist = false;
     for (StructuredRecord record : records) {
       String id = getId(config, new JsonParser().parse(record.get("object").toString()));
@@ -193,7 +193,7 @@ public class TestingHelper {
   }
 
   public static void createTestObject(SourceHubspotConfig config, String object)
-          throws URISyntaxException, IOException, InterruptedException {
+    throws URISyntaxException, IOException, InterruptedException {
     checkAndDelete(config, false);
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
     ArrayList<Header> clientHeaders = new ArrayList<>();
