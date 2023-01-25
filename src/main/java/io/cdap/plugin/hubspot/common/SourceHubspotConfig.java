@@ -106,6 +106,7 @@ public class SourceHubspotConfig extends BaseHubspotConfig {
                              String apiServerUrl,
                              String objectType,
                              String apiKey,
+                             String accessToken,
                              String filters,
                              String startDate,
                              String endDate,
@@ -114,7 +115,7 @@ public class SourceHubspotConfig extends BaseHubspotConfig {
                              String reportCategory,
                              String reportObject,
                              String timePeriod) {
-    super(referenceName, apiServerUrl, objectType, apiKey);
+    super(referenceName, apiServerUrl, objectType, apiKey, accessToken);
     this.filters = filters;
     this.startDate = startDate;
     this.endDate = endDate;

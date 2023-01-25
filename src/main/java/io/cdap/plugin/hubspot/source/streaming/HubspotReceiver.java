@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google Inc. All Rights Reserved.
+ * Copyright © 2020 Cask Data, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implementation of Spark receiver to receive Salesforce push topic events.
+ * Implementation of Spark receiver to receive Hubspot push topic events.
  */
 public class HubspotReceiver extends Receiver<String> {
   private static final Logger LOG = LoggerFactory.getLogger(HubspotReceiver.class);

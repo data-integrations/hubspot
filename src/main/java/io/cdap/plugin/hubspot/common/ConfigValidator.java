@@ -153,26 +153,23 @@ public class ConfigValidator {
     }
   }
 
-  protected static void validateAuthorization(SourceHubspotConfig sourceHubspotConfig,
+  protected static void validateAuthorization(SourceHubspotConfig config,
                                               FailureCollector failureCollector) {
-    if (sourceHubspotConfig.containsMacro(SourceHubspotConfig.TIME_PERIOD) ||
-      sourceHubspotConfig.containsMacro(SourceHubspotConfig.FILTERS) ||
-      sourceHubspotConfig.containsMacro(SourceHubspotConfig.REPORT_TYPE) ||
-      sourceHubspotConfig.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
-      sourceHubspotConfig.containsMacro(BaseHubspotConfig.API_KEY) ||
-      sourceHubspotConfig.containsMacro(SourceHubspotConfig.START_DATE) ||
-      sourceHubspotConfig.containsMacro(SourceHubspotConfig.END_DATE)) {
+    if (config.containsMacro(SourceHubspotConfig.TIME_PERIOD) ||
+        config.containsMacro(SourceHubspotConfig.FILTERS) ||
+        config.containsMacro(SourceHubspotConfig.REPORT_TYPE) ||
+        config.containsMacro(BaseHubspotConfig.OBJECT_TYPE) ||
+        config.containsMacro(BaseHubspotConfig.API_KEY) ||
+        config.containsMacro(BaseHubspotConfig.ACCESS_TOKEN) ||
+        config.containsMacro(BaseHubspotConfig.OAUTH_INFO) ||
+        config.containsMacro(SourceHubspotConfig.START_DATE) ||
+        config.containsMacro(SourceHubspotConfig.END_DATE)) {
       return;
     }
     try {
-      new HubspotHelper().getHubspotPage(sourceHubspotConfig, null);
+      new HubspotHelper().getHubspotPage(config, null);
     } catch (IOException e) {
-      if (e.getMessage().toLowerCase().contains("forbidden")) {
-        failureCollector.addFailure("Api endpoint not accessible with provided Api Key.", null)
-          .withConfigProperty(BaseHubspotConfig.API_KEY);
-      } else {
-        failureCollector.addFailure("Api endpoint not accessible with provided configuration.", null);
-      }
+      failureCollector.addFailure(e.getMessage(), null);
     }
   }
 

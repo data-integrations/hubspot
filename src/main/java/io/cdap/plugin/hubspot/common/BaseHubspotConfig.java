@@ -29,7 +29,10 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
 
   public static final String API_SERVER_URL = "apiServerUrl";
   public static final String OBJECT_TYPE = "objectType";
+  public static final String AUTHORIZATION_METHOD = "authorizationMethod";
   public static final String API_KEY = "apiKey";
+  public static final String ACCESS_TOKEN = "accessToken";
+  public static final String OAUTH_INFO = "oAuthInfo";
   public static final String DEFAULT_API_SERVER_URL = "https://api.hubapi.com";
 
   @Name(API_SERVER_URL)
@@ -41,10 +44,29 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   @Description("Name of object to pull from Hubspot.")
   @Macro
   public String objectType;
+  @Name(AUTHORIZATION_METHOD)
+  @Description("Authorization method.")
+  @Macro
+  @Nullable
+  public String authorizationMethod;
   @Name(API_KEY)
   @Description("OAuth2 API Key")
   @Macro
+  @Nullable
   public String apiKey;
+  @Name(ACCESS_TOKEN)
+  @Description("Private App Access Token")
+  @Macro
+  @Nullable
+  public String accessToken;
+  @Name(OAUTH_INFO)
+  @Description("OAuth information for connecting to Hubspot. " +
+          "It is expected to be a json string containing two properties, \"accessToken\" and \"instanceURL\", " +
+          "which carry the OAuth access token and the URL to connect to respectively. " +
+          "Use the ${oauth(provider, credentialId)} macro function for acquiring OAuth information dynamically. ")
+  @Macro
+  @Nullable
+  public OAuthInfo oAuthInfo;
 
   public BaseHubspotConfig(String referenceName) {
     super(referenceName);
@@ -60,11 +82,13 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
   public BaseHubspotConfig(String referenceName,
                            String apiServerUrl,
                            String objectType,
-                           String apiKey) {
+                           String apiKey,
+                           String accessToken) {
     super(referenceName);
     this.apiServerUrl = apiServerUrl;
     this.objectType = objectType;
     this.apiKey = apiKey;
+    this.accessToken = accessToken;
   }
 
   public ObjectType getObjectType() {
@@ -82,5 +106,19 @@ public class BaseHubspotConfig extends ReferencePluginConfig {
       apiServerUrl = this.apiServerUrl;
     }
     return apiServerUrl;
+  }
+
+  public String getApiKey() {
+    return apiKey == null ? "" : apiKey;
+  }
+
+  public String getAccessToken() {
+    if (!this.containsMacro(OAUTH_INFO) && oAuthInfo != null) {
+      String oauthAccessToken = oAuthInfo.getAccessToken();
+      if (oauthAccessToken != null && !oauthAccessToken.isEmpty()) {
+        accessToken = oauthAccessToken;
+      }
+    }
+    return accessToken == null ? "" : accessToken;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Cask Data, Inc.
+ * Copyright © 2022 Cask Data, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,19 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package io.cdap.plugin.hubspot.source.etl;
+package io.cdap.plugin.hubspot.common;
 
-import org.junit.BeforeClass;
+/**
+ * A class for storing the OAuth information returned by the {@code ${oauth}} macro function.
+ */
+public final class OAuthInfo {
 
-public class HubspotBatchAPISourceETLTest extends HubspotAPISourceETLTest {
-  @Override
-  public TestsRunner getTestRunner() {
-    return new BaseHubspotETLTest.BatchTestRunner();
+  private final String accessToken;
+  private final String instanceURL;
+
+  public OAuthInfo(String accessToken, String instanceURL) {
+    this.accessToken = accessToken;
+    this.instanceURL = instanceURL;
   }
 
-  @BeforeClass
-  public static void setupTestClass() throws Exception {
-    getCredentials();
-    BatchInitializer.setupTestClass();
+  public String getAccessToken() {
+    return accessToken;
+  }
+
+  public String getInstanceURL() {
+    return instanceURL;
   }
 }

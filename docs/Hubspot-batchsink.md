@@ -1,19 +1,23 @@
-# Hubspot Batch Bink
-
+# Hubspot Batch Sink
 Description
 -----------
-The plugin allows users to put data to HubSpot CRM.
+A batch sink that inserts objects into Hubspot.
 
-Properties
-----------
-### Basic
+### Authorization
+
+**Authorization method:** Select either Hubspot account API Key or Private App Access Token option.
+
+**API Key:** Hubspot account API Key (Deprecated. See this [guide](https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app) for migrating to using a Private App Access Token).
+
+**Private App Access Token:** The app should be allowed to write the respective type (selected below) of Hubspot objects.
+
+### Properties
 
 **Reference Name:** Name used to uniquely identify this source for lineage, annotating metadata, etc.
 
-**API Key:** OAuth2 API Key.
+**Object type:** The type of Hubspot objects to be inserted.
 
-**Object(s) to pull:** Name of Object(s) to put to Hubspot. Select from Contact Lists, Contacts, Companies, Deals, Deal Pipelines, Marketing Email, Products, Tickets
-  Object json format according documentation
+The currently available options are below (follow the links for Hubspot documentation):
   [Contact Lists](https://developers.hubspot.com/docs/methods/lists/create_list)
   [Contacts](https://developers.hubspot.com/docs/methods/contacts/create_contact)
   [Companies](https://developers.hubspot.com/docs/methods/companies/create_company)

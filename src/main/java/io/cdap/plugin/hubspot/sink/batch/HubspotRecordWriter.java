@@ -15,36 +15,43 @@
  */
 package io.cdap.plugin.hubspot.sink.batch;
 
+import io.cdap.plugin.hubspot.common.HubspotHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-
-import java.io.IOException;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
 
 /**
  * Submit {@link String} records to Hubspot.
  */
 public class HubspotRecordWriter extends RecordWriter<NullWritable, String> {
-  private HubspotSinkHelper hubspotSinkHelper;
-  private final SinkHubspotConfig sinkHubspotConfig;
+  private final SinkHubspotConfig config;
+
+  private static final Header POST_REQUEST_HEADER = new BasicHeader("Content-Type", "application/json");
 
   /**
    * Constructor for HubspotRecordWriter object.
    * @param taskAttemptContext the task attempt context
-   * @throws IOException on issues with data reading
    */
-  public HubspotRecordWriter(TaskAttemptContext taskAttemptContext) throws IOException {
-    Configuration conf = taskAttemptContext.getConfiguration();
-    String configJson = conf.get(HubspotOutputFormatProvider.PROPERTY_CONFIG_JSON);
-    sinkHubspotConfig = HubspotOutputFormatProvider.GSON.fromJson(configJson, SinkHubspotConfig.class);
+  public HubspotRecordWriter(TaskAttemptContext taskAttemptContext) {
+    Configuration configuration = taskAttemptContext.getConfiguration();
+    String configJson = configuration.get(HubspotOutputFormatProvider.PROPERTY_CONFIG_JSON);
+    config = HubspotOutputFormatProvider.GSON.fromJson(configJson, SinkHubspotConfig.class);
   }
 
   @Override
-  public void write(NullWritable nullWritable, String input) throws IOException {
-    hubspotSinkHelper = new HubspotSinkHelper();
+  public void write(NullWritable nullWritable, String input) {
     try {
-      hubspotSinkHelper.executeHTTPService(input, sinkHubspotConfig);
+      HttpPost request = (HttpPost) HubspotHelper.addCredentialsToRequest(
+              new HttpPost(getSinkEndpoint(config)), config);
+      request.addHeader(POST_REQUEST_HEADER);
+      request.setEntity(new StringEntity(input));
+      HubspotHelper.executeRequestWithRetries(request);
+
     } catch (Exception e) {
       throw new RuntimeException("Submit record to Hubspot failed with:", e);
     }
@@ -53,5 +60,33 @@ public class HubspotRecordWriter extends RecordWriter<NullWritable, String> {
   @Override
   public void close(TaskAttemptContext taskAttemptContext) {
     //no-op
+  }
+
+  private static String getSinkEndpoint(SinkHubspotConfig sinkHubspotConfig) {
+    String apiServerUrl = sinkHubspotConfig.getApiServerUrl();
+    switch (sinkHubspotConfig.getObjectType()) {
+      case CONTACT_LISTS:
+        return String.format("%s/contacts/v1/lists", apiServerUrl);
+      case CONTACTS:
+        return String.format("%s/contacts/v1/contact", apiServerUrl);
+      case COMPANIES:
+        return String.format("%s/companies/v2/companies", apiServerUrl);
+      case DEALS:
+        return String.format("%s/deals/v1/deal", apiServerUrl);
+      case DEAL_PIPELINES:
+        return String.format("%s/crm-pipelines/v1/pipelines/deals", apiServerUrl);
+      case MARKETING_EMAIL:
+        return String.format("%s/marketing-emails/v1/emails", apiServerUrl);
+      case PRODUCTS:
+        return String.format("%s/crm-objects/v1/objects/products", apiServerUrl);
+      case TICKETS:
+        return String.format("%s/crm-objects/v1/objects/tickets", apiServerUrl);
+      case ANALYTICS:
+      case EMAIL_EVENTS:
+      case EMAIL_SUBSCRIPTION:
+      case RECENT_COMPANIES:
+      default:
+        return null;
+    }
   }
 }
