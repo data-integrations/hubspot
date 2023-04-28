@@ -54,7 +54,7 @@ public class HubspotBatchSource extends BatchSource<NullWritable, JsonElement, S
 
   @Override
   public void configurePipeline(PipelineConfigurer pipelineConfigurer) {
-    validateConfiguration(pipelineConfigurer.getStageConfigurer().getFailureCollector());
+    //validateConfiguration(pipelineConfigurer.getStageConfigurer().getFailureCollector());
     pipelineConfigurer.getStageConfigurer().setOutputSchema(config.getSchema());
   }
 

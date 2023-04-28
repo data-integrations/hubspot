@@ -144,11 +144,13 @@ public class SourceHubspotConfig extends BaseHubspotConfig {
    * Returns the Schema.
    * @return the Schema
    */
+  @Nullable
   public Schema getSchema() {
-    Set<Schema.Field> schemaFields = new HashSet<>();
-    schemaFields.add(Schema.Field.of("objectType", Schema.nullableOf(Schema.of(Schema.Type.STRING))));
-    schemaFields.add(Schema.Field.of("object", Schema.nullableOf(Schema.of(Schema.Type.STRING))));
-    return Schema.recordOf("etlSchemaBody", schemaFields);
+    ObjectType objType = getObjectType();
+    if (objType == null) {
+      return null;
+    }
+    return objType.getSchema();
   }
 
   /**

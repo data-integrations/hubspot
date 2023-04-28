@@ -66,6 +66,10 @@
               "Tickets"
             ]
           }
+        },
+        {
+          "widget-type": "get-schema",
+          "widget-category": "plugin"
         }
       ]
     },
@@ -172,25 +176,6 @@
           }
         }
       ]
-    }
-  ],
-  "outputs": [
-    {
-      "widget-type": "non-editable-schema-editor",
-      "schema": {
-        "name": "etlSchemaBody",
-        "type": "record",
-        "fields": [
-          {
-            "name": "objectType",
-            "type": "string"
-          },
-          {
-            "name": "object",
-            "type": "string"
-          }
-        ]
-      }
     }
   ],
   "filters": [
