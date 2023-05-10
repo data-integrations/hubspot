@@ -20,6 +20,7 @@ import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import io.cdap.cdap.api.ServiceDiscoverer;
 
+import io.cdap.cdap.api.security.store.SecureStore;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -50,6 +51,16 @@ public class Hacks {
   public static OAuthTokenRefresher getTokenRefresher(String provider, String credentialId) throws Exception {
     ServiceDiscoverer serviceDiscoverer = getServiceDiscovererFromClassloader();
     return new OAuthTokenRefresher(serviceDiscoverer, provider, credentialId);
+  }
+
+  public static SecureStore getSecureStore()
+      throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    Class<?> sparkRuntimeContextProviderClass =
+        findClass(cl, "io.cdap.cdap.app.runtime.spark.SparkRuntimeContextProvider");
+
+    Method getMethod = sparkRuntimeContextProviderClass.getMethod("get");
+    return (SecureStore) getMethod.invoke(null);
   }
 
   private static ServiceDiscoverer getServiceDiscovererFromClassloader()

@@ -23,6 +23,8 @@ import io.cdap.cdap.api.data.batch.InputFormatProvider;
 import io.cdap.cdap.api.data.format.StructuredRecord;
 import io.cdap.cdap.api.dataset.lib.KeyValue;
 import io.cdap.cdap.api.plugin.PluginConfig;
+import io.cdap.cdap.api.security.store.SecureStore;
+import io.cdap.cdap.api.security.store.SecureStoreData;
 import io.cdap.cdap.etl.api.Emitter;
 import io.cdap.cdap.etl.api.batch.BatchSource;
 import io.cdap.cdap.etl.api.batch.BatchSourceContext;
@@ -41,10 +43,12 @@ import org.slf4j.LoggerFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Test source
@@ -54,6 +58,7 @@ import java.util.Map;
 public class TestSource extends BatchSource<NullWritable, StructuredRecord, StructuredRecord> {
   private static final Logger LOG = LoggerFactory.getLogger(TestSource.class);
   private static final String PROVIDER_KEY = "provider";
+  private static final String SECURE_KEY = "secureKey";
   private final Conf conf;
 
   public TestSource(Conf conf) {
@@ -70,7 +75,14 @@ public class TestSource extends BatchSource<NullWritable, StructuredRecord, Stru
 
       @Override
       public Map<String, String> getInputFormatConfiguration() {
-        return Collections.singletonMap(PROVIDER_KEY, conf.provider);
+        Map<String, String> inputConf = new HashMap<>();
+        if (conf.provider != null) {
+          inputConf.put(PROVIDER_KEY, conf.provider);
+        }
+        if (conf.secureKey != null) {
+          inputConf.put(SECURE_KEY, conf.secureKey);
+        }
+        return inputConf;
       }
     }));
   }
@@ -97,13 +109,29 @@ public class TestSource extends BatchSource<NullWritable, StructuredRecord, Stru
     public RecordReader<NullWritable, StructuredRecord> createRecordReader(
       InputSplit inputSplit, TaskAttemptContext taskAttemptContext) throws IOException {
       Configuration conf = taskAttemptContext.getConfiguration();
-      String provider = conf.get(PROVIDER_KEY);
 
-      try {
-        Hacks.OAuthTokenRefresher oAuthTokenRefresher = Hacks.getTokenRefresher(provider, "dummy");
-        LOG.info("Test calling authurl endpoint -- response = {}", oAuthTokenRefresher.getAuthURL());
-      } catch (Exception e) {
-        throw new IOException(e);
+      String provider = conf.get(PROVIDER_KEY);
+      if (provider != null) {
+        try {
+          Hacks.OAuthTokenRefresher oAuthTokenRefresher = Hacks.getTokenRefresher(provider,
+              "dummy");
+          LOG.info("Test calling authurl endpoint -- response = {}",
+              oAuthTokenRefresher.getAuthURL());
+        } catch (Exception e) {
+          throw new IOException(e);
+        }
+      }
+
+      String secureKey = conf.get(SECURE_KEY);
+      if (secureKey != null) {
+        try {
+          SecureStore secureStore = Hacks.getSecureStore();
+          SecureStoreData data = secureStore.get("system", secureKey);
+          LOG.info("Test get secure key {} in system namespace -- value = {}", secureKey,
+              new String(data.get(), StandardCharsets.UTF_8));
+        } catch (Exception e) {
+          throw new IOException(e);
+        }
       }
 
       return new RecordReader<NullWritable, StructuredRecord>() {
@@ -170,6 +198,10 @@ public class TestSource extends BatchSource<NullWritable, StructuredRecord, Stru
    * Plugin Config class.
    */
   public static class Conf extends PluginConfig {
+    @Nullable
     private String provider;
+
+    @Nullable
+    private String secureKey;
   }
 }
