@@ -401,6 +401,11 @@
       <version>${wiremock.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-io-sparkreceiver</artifactId>
+      <version>2.41.0</version>
+    </dependency>
   </dependencies>
 
   <build>
